@@ -1,0 +1,34 @@
+{
+  "name": "krowinski/bcmath-extended",
+  "description": "Extends php BCMath lib for missing functions like floor, ceil, round",
+  "keywords": [
+    "bc",
+    "bcmath",
+    "round",
+    "ceil",
+    "round",
+    "php",
+    "precision"
+  ],
+  "type": "library",
+  "require": {
+    "php": ">=5.4",
+    "ext-bcmath": "*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^5"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "KR",
+      "email": "kacper.rowinski@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "BCMathExtended\\": "src/BCMathExtended/"
+    }
+  },
+  "minimum-stability": "stable"
+}
