@@ -11,5 +11,5 @@ Installation
 ===
 
 ```sh
-composer require bcmath-extended
+composer require krowinski/bcmath-extended
 ```
