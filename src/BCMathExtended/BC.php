@@ -70,7 +70,7 @@ class BC
      */
     private static function returnZeroForIncorrectValue($number)
     {
-        if (in_array($number, ['', '-0'], true))
+        if (in_array($number, array('', '-0'), true))
         {
             return '0';
         }
