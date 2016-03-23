@@ -34,7 +34,7 @@ class BC
             $number = bcadd($number, $result, 0);
         }
 
-        return self::getZeroForEmptyString($number);
+        return self::returnZeroForIncorrectValue($number);
     }
 
     /**
@@ -66,11 +66,11 @@ class BC
 
     /**
      * @param int|string $number
-     * @return string
+     * @return int|string
      */
-    private static function getZeroForEmptyString($number)
+    private static function returnZeroForIncorrectValue($number)
     {
-        if ('' === $number)
+        if (in_array($number, ['', '-0'], true))
         {
             return '0';
         }
@@ -97,7 +97,7 @@ class BC
             return bcadd($number, '0.' . str_repeat('0', $precision) . '5', $precision);
         }
 
-        return self::getZeroForEmptyString($number);
+        return self::returnZeroForIncorrectValue($number);
     }
 
     /**
@@ -118,7 +118,7 @@ class BC
             $number = bcadd($number, $result, 0);
         }
 
-        return self::getZeroForEmptyString($number);
+        return self::returnZeroForIncorrectValue($number);
     }
 
     /**
@@ -134,7 +134,7 @@ class BC
             return substr($number, 1);
         }
 
-        return self::getZeroForEmptyString($number);
+        return self::returnZeroForIncorrectValue($number);
     }
 
     /**
