@@ -26,6 +26,7 @@ class BcTest extends \PHPUnit_Framework_TestCase
         self::assertSame('2', BC::ceil(1.8));
         self::assertSame('3', BC::ceil(2.7));
 
+        self::assertSame('0', BC::ceil('-0'));
         self::assertSame('0', BC::ceil(''));
         self::assertSame('0', BC::ceil(null));
         self::assertSame('20000', BC::ceil('2/0000'));
@@ -55,6 +56,7 @@ class BcTest extends \PHPUnit_Framework_TestCase
         self::assertSame('1', BC::floor(1.8));
         self::assertSame('2', BC::floor(2.7));
 
+        self::assertSame('0', BC::floor('-0'));
         self::assertSame('0', BC::floor(''));
         self::assertSame('0', BC::floor(null));
         self::assertSame('20000', BC::floor('2/0000'));
@@ -76,6 +78,7 @@ class BcTest extends \PHPUnit_Framework_TestCase
         self::assertSame('1.5', BC::abs('-1.5'));
         self::assertSame('9999999999999999999999999999999999999999999999999999999', BC::abs('-9999999999999999999999999999999999999999999999999999999'));
 
+        self::assertSame('0', BC::abs('-0'));
         self::assertSame('0', BC::abs(''));
         self::assertSame('0', BC::abs(null));
         self::assertSame('20000', BC::abs('2/0000'));
@@ -125,6 +128,7 @@ class BcTest extends \PHPUnit_Framework_TestCase
 
         self::assertSame('99999999999999999999999999999999999', BC::round('99999999999999999999999999999999999.000000000000000000000'));
 
+        self::assertSame('0', BC::round('-0'));
         self::assertSame('0', BC::round(''));
         self::assertSame('0', BC::round(null));
         self::assertSame('20000', BC::round('2/0000'));
