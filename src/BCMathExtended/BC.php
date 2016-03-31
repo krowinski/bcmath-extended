@@ -34,7 +34,7 @@ class BC
             $number = bcadd($number, $result, 0);
         }
 
-        return self::returnZeroForIncorrectValue($number);
+        return self::checkNumber($number);
     }
 
     /**
@@ -68,13 +68,13 @@ class BC
      * @param int|string $number
      * @return int|string
      */
-    private static function returnZeroForIncorrectValue($number)
+    private static function checkNumber($number)
     {
-        if (in_array($number, array('', '-0'), true))
+        $number = str_replace('+', '', filter_var($number, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION));
+        if ('' === $number)
         {
             return '0';
         }
-
         return $number;
     }
 
@@ -97,7 +97,7 @@ class BC
             return bcadd($number, '0.' . str_repeat('0', $precision) . '5', $precision);
         }
 
-        return self::returnZeroForIncorrectValue($number);
+        return self::checkNumber($number);
     }
 
     /**
@@ -118,7 +118,7 @@ class BC
             $number = bcadd($number, $result, 0);
         }
 
-        return self::returnZeroForIncorrectValue($number);
+        return self::checkNumber($number);
     }
 
     /**
@@ -131,10 +131,10 @@ class BC
 
         if (true === self::isNegative($number))
         {
-            return substr($number, 1);
+            $number = substr($number, 1);
         }
 
-        return self::returnZeroForIncorrectValue($number);
+        return self::checkNumber($number);
     }
 
     /**
