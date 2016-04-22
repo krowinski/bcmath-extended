@@ -71,7 +71,7 @@ class BC
     private static function checkNumber($number)
     {
         $number = str_replace('+', '', filter_var($number, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION));
-        if ('' === $number || '-0' === $number)
+        if ('-0' === $number || !is_numeric($number))
         {
             return '0';
         }
