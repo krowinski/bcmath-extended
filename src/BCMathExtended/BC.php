@@ -9,7 +9,7 @@ namespace BCMathExtended;
 class BC
 {
     /**
-     * @param null|int $scale
+     * @param int $scale
      */
     public static function setScale($scale)
     {
@@ -24,11 +24,9 @@ class BC
     {
         $number = (string)$number;
 
-        if (true === self::checkIsFloat($number) and true === self::checkIsFloatCleanZeros($number))
-        {
+        if (self::checkIsFloat($number) && self::checkIsFloatCleanZeros($number)) {
             $result = 1;
-            if (true === self::isNegative($number))
-            {
+            if (self::isNegative($number)) {
                 --$result;
             }
             $number = bcadd($number, $result, 0);
@@ -71,8 +69,7 @@ class BC
     private static function checkNumber($number)
     {
         $number = str_replace('+', '', filter_var($number, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION));
-        if ('-0' === $number || !is_numeric($number))
-        {
+        if ('-0' === $number || !is_numeric($number)) {
             return '0';
         }
         return $number;
@@ -87,10 +84,8 @@ class BC
     {
         $number = (string)$number;
 
-        if (true === self::checkIsFloat($number))
-        {
-            if (true === self::isNegative($number))
-            {
+        if (self::checkIsFloat($number)) {
+            if (self::isNegative($number)) {
                 return bcsub($number, '0.' . str_repeat('0', $precision) . '5', $precision);
             }
 
@@ -108,11 +103,9 @@ class BC
     {
         $number = (string)$number;
 
-        if (true === self::checkIsFloat($number) and true === self::checkIsFloatCleanZeros($number))
-        {
+        if (self::checkIsFloat($number) && self::checkIsFloatCleanZeros($number)) {
             $result = 0;
-            if (true === self::isNegative($number))
-            {
+            if (self::isNegative($number)) {
                 --$result;
             }
             $number = bcadd($number, $result, 0);
@@ -129,9 +122,8 @@ class BC
     {
         $number = (string)$number;
 
-        if (true === self::isNegative($number))
-        {
-            $number = substr($number, 1);
+        if (self::isNegative($number)) {
+            $number = (string)substr($number, 1);
         }
 
         return self::checkNumber($number);
@@ -148,9 +140,9 @@ class BC
         $min = (string)$min;
 
         $difference = bcadd(bcsub($max, $min), 1);
-        $rand_percent = bcdiv(mt_rand(), mt_getrandmax(), 8);
+        $randPercent = bcdiv(mt_rand(), mt_getrandmax(), 8);
 
-        return bcadd($min, bcmul($difference, $rand_percent, 8), 0);
+        return bcadd($min, bcmul($difference, $randPercent, 8), 0);
     }
 
     /**
@@ -160,16 +152,11 @@ class BC
     public static function max()
     {
         $max = null;
-        foreach (func_get_args() as $value)
-        {
-            if (null === $max)
-            {
+        foreach (func_get_args() as $value) {
+            if (null === $max) {
                 $max = $value;
-            }
-            else
-            {
-                if (bccomp($max, $value) < 0)
-                {
+            } else {
+                if (bccomp($max, $value) < 0) {
                     $max = $value;
                 }
             }
@@ -185,16 +172,11 @@ class BC
     public static function min()
     {
         $min = null;
-        foreach (func_get_args() as $value)
-        {
-            if (null === $min)
-            {
+        foreach (func_get_args() as $value) {
+            if (null === $min) {
                 $min = $value;
-            }
-            else
-            {
-                if (bccomp($min, $value) > 0)
-                {
+            } else {
+                if (bccomp($min, $value) > 0) {
                     $min = $value;
                 }
             }

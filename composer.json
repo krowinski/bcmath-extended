@@ -16,7 +16,7 @@
     "ext-bcmath": "*"
   },
   "require-dev": {
-    "phpunit/phpunit": "*"
+    "phpunit/phpunit": "~5.7"
   },
   "license": "MIT",
   "authors": [

@@ -7,7 +7,7 @@ use BCMathExtended\BC;
 /**
  * Class BcTest
  */
-class BcTest extends \PHPUnit_Framework_TestCase
+class BCTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test
