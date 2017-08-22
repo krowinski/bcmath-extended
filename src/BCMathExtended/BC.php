@@ -153,7 +153,9 @@ class BC
     {
         $max = null;
         $args = func_get_args();
-        if(is_array($args[0])) $args = $args[0];
+        if (is_array($args[0])) {
+            $args = $args[0];
+        }
         foreach ($args as $value) {
             if (null === $max) {
                 $max = $value;
@@ -175,7 +177,9 @@ class BC
     {
         $min = null;
         $args = func_get_args();
-        if(is_array($args[0])) $args = $args[0];
+        if (is_array($args[0])) {
+            $args = $args[0];
+        }
         foreach ($args as $value) {
             if (null === $min) {
                 $min = $value;
@@ -194,7 +198,7 @@ class BC
      * @param int $places
      * @return string
      */
-    function roundDown($value, int $places) : string
+    public static function roundDown($value, int $places)
     {
         $mult = bcpow(10, abs($places));
         return $places < 0 ?
@@ -207,7 +211,7 @@ class BC
      * @param int $places
      * @return string
      */
-    function roundUp($value, $places) : string
+    public static function roundUp($value, $places)
     {
         $mult = bcpow(10, abs($places));
         return $places < 0 ?
