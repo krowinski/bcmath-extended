@@ -198,7 +198,7 @@ class BC
      * @param int $places
      * @return string
      */
-    public static function roundDown($value, int $places)
+    public static function roundDown($value, $places)
     {
         $mult = bcpow(10, abs($places));
         return $places < 0 ?
