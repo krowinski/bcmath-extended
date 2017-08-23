@@ -195,28 +195,27 @@ class BC
     
     /**
      * @param int|string $value
-     * @param int $places
+     * @param int $precision
      * @return string
      */
-    public static function roundDown($value, $places)
+    public static function roundDown($value, $precision = 0)
     {
-        $mult = bcpow(10, abs($places));
-        return $places < 0 ?
-            bcmul(BC::floor(bcdiv($value, $mult)), $mult) :
-            bcdiv(BC::floor(bcmul($value, $mult)), $mult);
-    }
-    
-    /**
-     * @param int|string $value
-     * @param int $places
-     * @return string
-     */
-    public static function roundUp($value, $places)
-    {
-        $mult = bcpow(10, abs($places));
-        return $places < 0 ?
-            bcmul(BC::ceil(bcdiv($value, $mult)), $mult) :
-            bcdiv(BC::ceil(bcmul($value, $mult)), $mult);
+        $multiply = bcpow(10, abs($precision));
+        return $precision < 0 ?
+            bcmul(BC::floor(bcdiv($value, $multiply)), $multiply, $precision) :
+            bcdiv(BC::floor(bcmul($value, $multiply)), $multiply, $precision);
     }
 
+    /**
+     * @param int|string $value
+     * @param int $precision
+     * @return string
+     */
+    public static function roundUp($value, $precision = 0)
+    {
+        $multiply = bcpow(10, abs($precision));
+        return $precision < 0 ?
+            bcmul(BC::ceil(bcdiv($value, $multiply)), $multiply, $precision) :
+            bcdiv(BC::ceil(bcmul($value, $multiply)), $multiply, $precision);
+    }
 }
