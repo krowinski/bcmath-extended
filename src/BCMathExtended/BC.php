@@ -146,13 +146,17 @@ class BC
     }
 
     /**
-     * @param int|string,...
+     * @param array|int|string,...
      * @return null|int|string
      */
     public static function max()
     {
         $max = null;
-        foreach (func_get_args() as $value) {
+        $args = func_get_args();
+        if (is_array($args[0])) {
+            $args = $args[0];
+        }
+        foreach ($args as $value) {
             if (null === $max) {
                 $max = $value;
             } else {
@@ -166,13 +170,17 @@ class BC
     }
 
     /**
-     * @param int|string,...
+     * @param array|int|string,...
      * @return null|int|string
      */
     public static function min()
     {
         $min = null;
-        foreach (func_get_args() as $value) {
+        $args = func_get_args();
+        if (is_array($args[0])) {
+            $args = $args[0];
+        }
+        foreach ($args as $value) {
             if (null === $min) {
                 $min = $value;
             } else {
@@ -184,4 +192,31 @@ class BC
 
         return $min;
     }
+    
+    /**
+     * @param int|string $value
+     * @param int $places
+     * @return string
+     */
+    public static function roundDown($value, $places)
+    {
+        $mult = bcpow(10, abs($places));
+        return $places < 0 ?
+            bcmul(BC::floor(bcdiv($value, $mult)), $mult) :
+            bcdiv(BC::floor(bcmul($value, $mult)), $mult);
+    }
+    
+    /**
+     * @param int|string $value
+     * @param int $places
+     * @return string
+     */
+    public static function roundUp($value, $places)
+    {
+        $mult = bcpow(10, abs($places));
+        return $places < 0 ?
+            bcmul(BC::ceil(bcdiv($value, $mult)), $mult) :
+            bcdiv(BC::ceil(bcmul($value, $mult)), $mult);
+    }
+
 }
