@@ -165,6 +165,8 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame(3, BC::max(1, 2, 3));
         self::assertSame(6, BC::max(6, 3, 2));
         self::assertSame(999, BC::max(100, 999, 5));
+        self::assertSame(677, BC::max(array(3,5,677)));
+        self::assertSame(-3, BC::max(array(-3,-5,-677)));
 
         self::assertSame('999999999999999999999999999999999999999999', BC::max('432423432423423423423423432432423423423', '999999999999999999999999999999999999999999', '321312312423435657'));
     }
@@ -177,6 +179,8 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame(1, BC::min(1, 2, 3));
         self::assertSame(2, BC::min(6, 3, 2));
         self::assertSame(5, BC::min(100, 999, 5));
+        self::assertSame(3, BC::min(array(3,5,677)));
+        self::assertSame(-677, BC::min(array(-3,-5,-677)));
 
         self::assertSame('321312312423435657', BC::min('432423432423423423423423432432423423423', '999999999999999999999999999999999999999999', '321312312423435657'));
     }
@@ -194,5 +198,43 @@ class BCTest extends \PHPUnit_Framework_TestCase
 
         BC::setScale(13);
         self::assertSame('3.0000000000000', bcadd('1', '2'));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldRoundUp()
+    {
+        self::assertSame( '663', BC::roundUp(662.79));
+        self::assertSame( '662.8', BC::roundUp(662.79, 1));
+        self::assertSame( '60', BC::roundUp(54.1, -1));
+        self::assertSame( '60', BC::roundUp(55.1, -1));
+        self::assertSame( '-23.6', BC::roundUp(-23.62, 1));
+        self::assertSame( '4', BC::roundUp(3.2));
+        self::assertSame( '77', BC::roundUp(76.9));
+        self::assertSame( '3.142', BC::roundUp(3.14159, 3));
+        self::assertSame( '-3.1', BC::roundUp(-3.14159, 1));
+        self::assertSame( '31500', BC::roundUp(31415.92654, -2));
+        self::assertSame( '31420', BC::roundUp(31415.92654, -1));
+        self::assertSame( '0.0119', BC::roundUp(0.0119, 4));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldRoundDown()
+    {
+        self::assertSame( '662', BC::roundDown(662.79));
+        self::assertSame( '662.7', BC::roundDown(662.79, 1));
+        self::assertSame( '50', BC::roundDown(54.1, -1));
+        self::assertSame( '50', BC::roundDown(55.1, -1));
+        self::assertSame( '-23.7', BC::roundDown(-23.62, 1));
+        self::assertSame( '3', BC::roundDown(3.2));
+        self::assertSame( '76', BC::roundDown(76.9));
+        self::assertSame( '3.141', BC::roundDown(3.14159, 3));
+        self::assertSame( '-3.2', BC::roundDown(-3.14159, 1));
+        self::assertSame( '31400', BC::roundDown(31415.92654, -2));
+        self::assertSame( '31410', BC::roundDown(31415.92654, -1));
+        self::assertSame( '0.0119', BC::roundDown(0.0119, 4));
     }
 }

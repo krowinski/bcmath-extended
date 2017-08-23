@@ -146,13 +146,17 @@ class BC
     }
 
     /**
-     * @param int|string,...
+     * @param array|int|string,...
      * @return null|int|string
      */
     public static function max()
     {
         $max = null;
-        foreach (func_get_args() as $value) {
+        $args = func_get_args();
+        if (is_array($args[0])) {
+            $args = $args[0];
+        }
+        foreach ($args as $value) {
             if (null === $max) {
                 $max = $value;
             } else {
@@ -166,13 +170,17 @@ class BC
     }
 
     /**
-     * @param int|string,...
+     * @param array|int|string,...
      * @return null|int|string
      */
     public static function min()
     {
         $min = null;
-        foreach (func_get_args() as $value) {
+        $args = func_get_args();
+        if (is_array($args[0])) {
+            $args = $args[0];
+        }
+        foreach ($args as $value) {
             if (null === $min) {
                 $min = $value;
             } else {
@@ -183,5 +191,31 @@ class BC
         }
 
         return $min;
+    }
+    
+    /**
+     * @param int|string $value
+     * @param int $precision
+     * @return string
+     */
+    public static function roundDown($value, $precision = 0)
+    {
+        $multiply = bcpow(10, abs($precision));
+        return $precision < 0 ?
+            bcmul(BC::floor(bcdiv($value, $multiply)), $multiply, $precision) :
+            bcdiv(BC::floor(bcmul($value, $multiply)), $multiply, $precision);
+    }
+
+    /**
+     * @param int|string $value
+     * @param int $precision
+     * @return string
+     */
+    public static function roundUp($value, $precision = 0)
+    {
+        $multiply = bcpow(10, abs($precision));
+        return $precision < 0 ?
+            bcmul(BC::ceil(bcdiv($value, $multiply)), $multiply, $precision) :
+            bcdiv(BC::ceil(bcmul($value, $multiply)), $multiply, $precision);
     }
 }
