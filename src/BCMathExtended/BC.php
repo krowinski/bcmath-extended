@@ -8,6 +8,10 @@ namespace BCMathExtended;
  */
 class BC
 {
+    const COMPARE_EQUAL = 0;
+    const COMPARE_LEFT_GRATER = 1;
+    const COMPARE_RIGHT_GRATER = -1;
+
     /**
      * @param int $scale
      */
@@ -29,7 +33,7 @@ class BC
             if (self::isNegative($number)) {
                 --$result;
             }
-            $number = bcadd($number, $result, 0);
+            $number = self::add($number, $result, 0);
         }
 
         return self::checkNumber($number);
@@ -86,10 +90,10 @@ class BC
 
         if (self::checkIsFloat($number)) {
             if (self::isNegative($number)) {
-                return bcsub($number, '0.' . str_repeat('0', $precision) . '5', $precision);
+                return self::sub($number, '0.' . str_repeat('0', $precision) . '5', $precision);
             }
 
-            return bcadd($number, '0.' . str_repeat('0', $precision) . '5', $precision);
+            return self::add($number, '0.' . str_repeat('0', $precision) . '5', $precision);
         }
 
         return self::checkNumber($number);
@@ -108,7 +112,7 @@ class BC
             if (self::isNegative($number)) {
                 --$result;
             }
-            $number = bcadd($number, $result, 0);
+            $number = self::add($number, $result, 0);
         }
 
         return self::checkNumber($number);
@@ -139,10 +143,10 @@ class BC
         $max = (string)$max;
         $min = (string)$min;
 
-        $difference = bcadd(bcsub($max, $min), 1);
-        $randPercent = bcdiv(mt_rand(), mt_getrandmax(), 8);
+        $difference = self::add(self::sub($max, $min), 1);
+        $randPercent = self::div(mt_rand(), mt_getrandmax(), 8);
 
-        return bcadd($min, bcmul($difference, $randPercent, 8), 0);
+        return self::add($min, self::mul($difference, $randPercent, 8), 0);
     }
 
     /**
@@ -160,7 +164,7 @@ class BC
             if (null === $max) {
                 $max = $value;
             } else {
-                if (bccomp($max, $value) < 0) {
+                if (self::comp($max, $value) < 0) {
                     $max = $value;
                 }
             }
@@ -184,7 +188,7 @@ class BC
             if (null === $min) {
                 $min = $value;
             } else {
-                if (bccomp($min, $value) > 0) {
+                if (self::comp($min, $value) > 0) {
                     $min = $value;
                 }
             }
@@ -192,30 +196,143 @@ class BC
 
         return $min;
     }
-    
+
     /**
-     * @param int|string $value
+     * @param int|string $number
      * @param int $precision
      * @return string
      */
-    public static function roundDown($value, $precision = 0)
+    public static function roundDown($number, $precision = 0)
     {
-        $multiply = bcpow(10, abs($precision));
+        $multiply = self::pow(10, (string)abs($precision));
         return $precision < 0 ?
-            bcmul(BC::floor(bcdiv($value, $multiply)), $multiply, $precision) :
-            bcdiv(BC::floor(bcmul($value, $multiply)), $multiply, $precision);
+            self::mul(self::floor(self::div($number, $multiply)), $multiply, $precision) :
+            self::div(self::floor(self::mul($number, $multiply)), $multiply, $precision);
     }
 
     /**
-     * @param int|string $value
+     * @param int|string $number
      * @param int $precision
      * @return string
      */
-    public static function roundUp($value, $precision = 0)
+    public static function roundUp($number, $precision = 0)
     {
-        $multiply = bcpow(10, abs($precision));
+        $multiply = self::pow(10, (string)abs($precision));
         return $precision < 0 ?
-            bcmul(BC::ceil(bcdiv($value, $multiply)), $multiply, $precision) :
-            bcdiv(BC::ceil(bcmul($value, $multiply)), $multiply, $precision);
+            self::mul(self::ceil(self::div($number, $multiply)), $multiply, $precision) :
+            self::div(self::ceil(self::mul($number, $multiply)), $multiply, $precision);
+    }
+
+    /**
+     * @return int
+     */
+    public static function getScale()
+    {
+        $sqrt = bcsqrt('2');
+        return strlen(substr($sqrt, strpos($sqrt, '.') + 1));
+    }
+
+    /**
+     * @param string $leftOperand
+     * @param string $rightOperand
+     * @param int $scale
+     * @return string
+     */
+    public static function add($leftOperand, $rightOperand, $scale = null)
+    {
+        return bcadd($leftOperand, $rightOperand, $scale);
+    }
+
+    /**
+     * @param string $leftOperand
+     * @param string $rightOperand
+     * @param int $scale
+     * @return int
+     */
+    public static function comp($leftOperand, $rightOperand, $scale = null)
+    {
+        return bccomp($leftOperand, $rightOperand, $scale);
+    }
+
+    /**
+     * @param string $leftOperand
+     * @param string $rightOperand
+     * @param int $scale
+     * @return string
+     */
+    public static function div($leftOperand, $rightOperand, $scale = null)
+    {
+        if (null === $scale) {
+            return bcdiv($leftOperand, $rightOperand);
+        }
+        return bcdiv($leftOperand, $rightOperand, $scale);
+    }
+
+    /**
+     * @param string $leftOperand
+     * @param string $modulus
+     * @return string
+     */
+    public static function mod($leftOperand, $modulus)
+    {
+        return bcmod($leftOperand, $modulus);
+    }
+
+    /**
+     * @param string $leftOperand
+     * @param string $rightOperand
+     * @param int $scale
+     * @return string
+     */
+    public static function mul($leftOperand, $rightOperand, $scale = null)
+    {
+        if (null === $scale) {
+            return bcmul($leftOperand, $rightOperand);
+        }
+        return bcmul($leftOperand, $rightOperand, $scale);
+    }
+
+    /**
+     * @param string $leftOperand
+     * @param string $rightOperand
+     * @param int $scale
+     * @return string
+     */
+    public static function pow($leftOperand, $rightOperand, $scale = null)
+    {
+        return bcpow($leftOperand, $rightOperand, $scale);
+    }
+
+    /**
+     * @param string $leftOperand
+     * @param string $rightOperand
+     * @param string $modulus
+     * @param int $scale
+     * @return string
+     */
+    public static function powMod($leftOperand, $rightOperand, $modulus, $scale = null)
+    {
+        return bcpowmod($leftOperand, $rightOperand, $modulus, $scale);
+    }
+
+    /**
+     * @param string $operand
+     * @param int $scale
+     * @return string
+     */
+    public static function sqrt($operand, $scale = null)
+    {
+        return bcsqrt($operand, $scale);
+    }
+
+    /**
+     * @param string $leftOperand
+     * @param string $rightOperand
+     * @param int $scale
+     * @return string
+     */
+    public static function sub($leftOperand, $rightOperand, $scale = null)
+    {
+        return bcsub($leftOperand, $rightOperand, $scale);
     }
 }
