@@ -7,6 +7,7 @@
 [![License](https://poser.pugx.org/krowinski/bcmath-extended/license)](https://packagist.org/packages/krowinski/bcmath-extended)
 
 Extends php BCMath lib for missing functions like floor, ceil, round, abs, min, max, rand for big numbers.
+Also wraps existing BCMath functions. (more http://php.net/manual/en/book.bc.php)
 
 Installation
 ===
