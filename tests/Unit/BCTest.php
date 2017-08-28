@@ -222,6 +222,11 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame('31500', BC::roundUp(31415.92654, -2));
         self::assertSame('31420', BC::roundUp(31415.92654, -1));
         self::assertSame('0.0119', BC::roundUp(0.0119, 4));
+
+        self::assertSame('0', BC::roundUp('-0'));
+        self::assertSame('0', BC::roundUp(''));
+        self::assertSame('0', BC::roundUp(null));
+        self::assertSame('0', BC::roundUp('0-'));
     }
 
     /**
@@ -241,6 +246,11 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame('31400', BC::roundDown(31415.92654, -2));
         self::assertSame('31410', BC::roundDown(31415.92654, -1));
         self::assertSame('0.0119', BC::roundDown(0.0119, 4));
+
+        self::assertSame('0', BC::roundDown('-0'));
+        self::assertSame('0', BC::roundDown(''));
+        self::assertSame('0', BC::roundDown(null));
+        self::assertSame('0', BC::roundDown('0-'));
     }
 
     /**
