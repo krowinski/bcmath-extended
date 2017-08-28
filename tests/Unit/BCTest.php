@@ -170,6 +170,7 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame(3, BC::max(1, 2, 3));
         self::assertSame(6, BC::max(6, 3, 2));
         self::assertSame(999, BC::max(100, 999, 5));
+      
         self::assertSame(677, BC::max(array(3, 5, 677)));
         self::assertSame(-3, BC::max(array(-3, -5, -677)));
 
@@ -184,6 +185,7 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame(1, BC::min(1, 2, 3));
         self::assertSame(2, BC::min(6, 3, 2));
         self::assertSame(5, BC::min(100, 999, 5));
+
         self::assertSame(3, BC::min(array(3, 5, 677)));
         self::assertSame(-677, BC::min(array(-3, -5, -677)));
 
