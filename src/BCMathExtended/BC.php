@@ -296,7 +296,7 @@ class BC
             $leftOperand,
             self::mul(
                 $modulus,
-                self::floor(self::div($leftOperand, $modulus)),
+                self::floor(self::div($leftOperand, $modulus, $scale)),
                 $scale
             ),
             $scale
