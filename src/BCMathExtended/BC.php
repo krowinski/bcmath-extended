@@ -280,6 +280,31 @@ class BC
 
     /**
      * @param string $leftOperand
+     * @param string $modulus
+     * @param int $scale
+     * @return string
+     */
+    public static function fmod($leftOperand, $modulus, $scale = null)
+    {
+        // From PHP 7.2 on, bcmod can handle real numbers
+        if (version_compare(PHP_VERSION, '7.2.0') >= 0) {
+            return bcmod($leftOperand, $modulus);
+        }
+
+        // mod(a, b) = a - b * floor(a/b)
+        return self::sub(
+            $leftOperand,
+            self::mul(
+                $modulus,
+                self::floor(self::div($leftOperand, $modulus)),
+                $scale
+            ),
+            $scale
+        );
+    }
+
+    /**
+     * @param string $leftOperand
      * @param string $rightOperand
      * @param int $scale
      * @return string

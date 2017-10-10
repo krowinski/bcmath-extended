@@ -170,7 +170,7 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame(3, BC::max(1, 2, 3));
         self::assertSame(6, BC::max(6, 3, 2));
         self::assertSame(999, BC::max(100, 999, 5));
-      
+
         self::assertSame(677, BC::max(array(3, 5, 677)));
         self::assertSame(-3, BC::max(array(-3, -5, -677)));
 
@@ -320,6 +320,17 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame('1', BC::mod('11', '2'));
         self::assertSame('-1', BC::mod('-1', '5'));
         self::assertSame('1459434331351930289678', BC::mod('8728932001983192837219398127471', '1928372132132819737213'));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldFmod()
+    {
+        self::assertSame('0.8', BC::fmod('10', '9.2', 1));
+        self::assertSame('0.0', BC::fmod('20', '4.0', 1));
+        self::assertSame('0.0', BC::fmod('10.5', '3.5', 1));
+        self::assertSame('0.3', BC::fmod('10.2', '3.3', 1));
     }
 
     /**
