@@ -10,9 +10,25 @@ use BCMathExtended\BC;
 class BCTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var int
+     * @test
      */
-    private $scale = 0;
+    public function shouldConvertScientificNotationToString()
+    {
+        self::assertSame('0', BC::convertScientificNotationToString('-0'));
+        self::assertSame('0', BC::convertScientificNotationToString(''));
+        self::assertSame('666', BC::convertScientificNotationToString('666'));
+        self::assertSame('-666', BC::convertScientificNotationToString('-666'));
+        self::assertSame('99999999999999999999999999999999999.000000000000000000000', BC::convertScientificNotationToString('99999999999999999999999999999999999.000000000000000000000'));
+        self::assertSame('99999999999999999999999999999999999.999999999999999999999', BC::convertScientificNotationToString('99999999999999999999999999999999999.999999999999999999999'));
+        self::assertSame('0.00000000001', BC::convertScientificNotationToString(1.0E-11));
+        self::assertSame('1000000000000000000000000000000', BC::convertScientificNotationToString(1.0E+30));
+        self::assertSame('-1540000000000000', BC::convertScientificNotationToString(-1.54E+15));
+        self::assertSame('1540000000000000', BC::convertScientificNotationToString(1.54E+15));
+        self::assertSame('602200000000000000000000', BC::convertScientificNotationToString('6.022E+23'));
+        self::assertSame('602200000000000000000000', BC::convertScientificNotationToString('6.022e+23'));
+        self::assertSame('-602200000000000000000000', BC::convertScientificNotationToString('-6.022e+23'));
+        self::assertSame('-602200000000000000000000', BC::convertScientificNotationToString('-6.022e+23'));
+    }
 
     /**
      * @test
@@ -167,12 +183,12 @@ class BCTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldMax()
     {
-        self::assertSame(3, BC::max(1, 2, 3));
-        self::assertSame(6, BC::max(6, 3, 2));
-        self::assertSame(999, BC::max(100, 999, 5));
+        self::assertSame('3', BC::max(1, 2, 3));
+        self::assertSame('6', BC::max(6, 3, 2));
+        self::assertSame('999', BC::max(100, 999, 5));
 
-        self::assertSame(677, BC::max(array(3, 5, 677)));
-        self::assertSame(-3, BC::max(array(-3, -5, -677)));
+        self::assertSame('677', BC::max(array(3, 5, 677)));
+        self::assertSame('-3', BC::max(array(-3, -5, -677)));
 
         self::assertSame('999999999999999999999999999999999999999999', BC::max('432423432423423423423423432432423423423', '999999999999999999999999999999999999999999', '321312312423435657'));
     }
@@ -182,12 +198,12 @@ class BCTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldMin()
     {
-        self::assertSame(1, BC::min(1, 2, 3));
-        self::assertSame(2, BC::min(6, 3, 2));
-        self::assertSame(5, BC::min(100, 999, 5));
+        self::assertSame('1', BC::min(1, 2, 3));
+        self::assertSame('2', BC::min(6, 3, 2));
+        self::assertSame('5', BC::min(100, 999, 5));
 
-        self::assertSame(3, BC::min(array(3, 5, 677)));
-        self::assertSame(-677, BC::min(array(-3, -5, -677)));
+        self::assertSame('3', BC::min(array(3, 5, 677)));
+        self::assertSame('-677', BC::min(array(-3, -5, -677)));
 
         self::assertSame('321312312423435657', BC::min('432423432423423423423423432432423423423', '999999999999999999999999999999999999999999', '321312312423435657'));
     }
