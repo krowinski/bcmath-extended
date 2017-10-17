@@ -212,7 +212,7 @@ class BC
             $number = self::convertScientificNotationToString($number);
             if (null === $max) {
                 $max = $number;
-            } else if (self::comp($max, $number) < 0) {
+            } else if (self::comp($max, $number) === self::COMPARE_RIGHT_GRATER) {
                 $max = $number;
             }
         }
@@ -231,7 +231,7 @@ class BC
         return bccomp(
             self::convertScientificNotationToString($leftOperand),
             self::convertScientificNotationToString($rightOperand),
-            $scale
+            null === $scale ? max(strlen($leftOperand), strlen($rightOperand)) : $scale
         );
     }
 
@@ -250,7 +250,7 @@ class BC
             $number = self::convertScientificNotationToString($number);
             if (null === $min) {
                 $min = $number;
-            } else if (self::comp($min, $number) > 0) {
+            } else if (self::comp($min, $number) === self::COMPARE_LEFT_GRATER) {
                 $min = $number;
             }
         }
