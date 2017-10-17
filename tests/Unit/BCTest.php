@@ -1,6 +1,6 @@
 <?php
 
-namespace Unit;
+namespace BCMathExtended\Tests\Unit;
 
 use BCMathExtended\BC;
 
@@ -20,7 +20,6 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame('-666', BC::convertScientificNotationToString('-666'));
         self::assertSame('99999999999999999999999999999999999.000000000000000000000', BC::convertScientificNotationToString('99999999999999999999999999999999999.000000000000000000000'));
         self::assertSame('99999999999999999999999999999999999.999999999999999999999', BC::convertScientificNotationToString('99999999999999999999999999999999999.999999999999999999999'));
-        self::assertSame('0.00000000001', BC::convertScientificNotationToString(1.0E-11));
         self::assertSame('1000000000000000000000000000000', BC::convertScientificNotationToString(1.0E+30));
         self::assertSame('-1540000000000000', BC::convertScientificNotationToString(-1.54E+15));
         self::assertSame('1540000000000000', BC::convertScientificNotationToString(1.54E+15));
@@ -28,6 +27,14 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame('602200000000000000000000', BC::convertScientificNotationToString('6.022e+23'));
         self::assertSame('-602200000000000000000000', BC::convertScientificNotationToString('-6.022e+23'));
         self::assertSame('-602200000000000000000000', BC::convertScientificNotationToString('-6.022e+23'));
+
+        self::assertSame('0.00000000001', BC::convertScientificNotationToString(1.0E-11));
+        self::assertSame('0.0000051', BC::convertScientificNotationToString(5.1E-6));
+        self::assertSame('0.02', BC::convertScientificNotationToString(2E-2));
+        self::assertSame('0.0021', BC::convertScientificNotationToString(2.1E-3));
+        self::assertSame('0.00000003', BC::convertScientificNotationToString(3E-8));
+        self::assertSame('0.00000003', BC::convertScientificNotationToString(3E-8));
+        self::assertSame('0.000000657', BC::convertScientificNotationToString(6.57E-7));
     }
 
     /**
@@ -58,6 +65,11 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame('100000000000000000000000000000000000', BC::ceil('99999999999999999999999999999999999.999999999999999999999'));
 
         self::assertSame('0', BC::ceil('0-'));
+
+        self::assertSame('100000000000000000000000000000000000', BC::ceil(1.0E+35));
+        self::assertSame('-100000000000000000000000000000000000', BC::ceil(-1.0E+35));
+        self::assertSame('1', BC::ceil(3E-8));
+        self::assertSame('1', BC::ceil(1.0E-11));
     }
 
     /**
@@ -90,6 +102,11 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame('99999999999999999999999999999999999', BC::floor('99999999999999999999999999999999999.999999999999999999999'));
 
         self::assertSame('0', BC::floor('0-'));
+
+        self::assertSame('100000000000000000000000000000000000', BC::floor(1.0E+35));
+        self::assertSame('-100000000000000000000000000000000000', BC::floor(-1.0E+35));
+        self::assertSame('0', BC::floor(3E-8));
+        self::assertSame('0', BC::floor(1.0E-11));
     }
 
     /**
@@ -110,6 +127,10 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame('60000', BC::abs('-6/0000'));
         self::assertSame('1000000000000000000000000000000', BC::abs('+1/000000000000000000000000000000'));
         self::assertSame('0', BC::abs('0-'));
+
+        self::assertSame('100000000000000000000000000000000000', BC::abs(1.0E+35));
+        self::assertSame('100000000000000000000000000000000000', BC::abs(-1.0E+35));
+        self::assertSame('0.0000051', BC::abs(-5.1E-6));
     }
 
     /**
@@ -161,6 +182,13 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame('-60000', BC::round('-6/0000'));
         self::assertSame('1000000000000000000000000000000', BC::round('+1/000000000000000000000000000000'));
         self::assertSame('0', BC::round('0-'));
+
+        self::assertSame('100000000000000000000000000000000000', BC::round(1.0E+35));
+        self::assertSame('-100000000000000000000000000000000000', BC::round(-1.0E+35));
+        self::assertSame('0', BC::round(3E-8));
+        self::assertSame('0', BC::round(1.0E-11));
+        self::assertSame('-0.0006', BC::round(-5.6E-4, 4));
+        self::assertSame('0.0000000010', BC::round(9.9999E-10, 10));
     }
 
     /**
@@ -191,6 +219,8 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame('-3', BC::max(array(-3, -5, -677)));
 
         self::assertSame('999999999999999999999999999999999999999999', BC::max('432423432423423423423423432432423423423', '999999999999999999999999999999999999999999', '321312312423435657'));
+
+        self::assertSame('0.00000000099999',  BC::max(9.9999E-10, -5.6E-4));
     }
 
     /**
@@ -206,6 +236,8 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame('-677', BC::min(array(-3, -5, -677)));
 
         self::assertSame('321312312423435657', BC::min('432423432423423423423423432432423423423', '999999999999999999999999999999999999999999', '321312312423435657'));
+
+        self::assertSame('-0.00056',  BC::min(9.9999E-10, -5.6E-4));
     }
 
     /**
@@ -245,6 +277,8 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame('0', BC::roundUp(''));
         self::assertSame('0', BC::roundUp(null));
         self::assertSame('0', BC::roundUp('0-'));
+
+        self::assertSame('1',  BC::roundUp(9.9999E-10));
     }
 
     /**
@@ -269,6 +303,8 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame('0', BC::roundDown(''));
         self::assertSame('0', BC::roundDown(null));
         self::assertSame('0', BC::roundDown('0-'));
+
+        self::assertSame('0',  BC::roundDown(9.9999E-10));
     }
 
     /**
@@ -279,6 +315,8 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame('3', BC::add('1', '2'));
         self::assertSame('4.0000', BC::add('-1', '5', 4));
         self::assertSame('8728932003911564969352217864684.00', BC::add('1928372132132819737213', '8728932001983192837219398127471', 2));
+
+        self::assertSame('-0.00055999', BC::add(9.9999E-10, -5.6E-4, 8));
     }
 
     /**
@@ -289,6 +327,8 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame('-1', BC::sub('1', '2'));
         self::assertSame('-6.0000', BC::sub('-1', '5', 4));
         self::assertSame('8728932000054820705086578390258.00', BC::sub('8728932001983192837219398127471', '1928372132132819737213', 2));
+
+        self::assertSame('0.00056000', BC::sub(9.9999E-10, -5.6E-4, 8));
     }
 
     /**
@@ -326,6 +366,8 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame('0.50', BC::div('1', '2', 2));
         self::assertSame('-0.2000', BC::div('-1', '5', 4));
         self::assertSame('4526580661.75', BC::div('8728932001983192837219398127471', '1928372132132819737213', 2));
+
+        self::assertSame('0', BC::div(9.9999E-10, 10));
     }
 
     /**
@@ -336,6 +378,8 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame('1', BC::mod('11', '2'));
         self::assertSame('-1', BC::mod('-1', '5'));
         self::assertSame('1459434331351930289678', BC::mod('8728932001983192837219398127471', '1928372132132819737213'));
+
+        self::assertSame('0', BC::mod(9.9999E-10, 1));
     }
 
     /**
@@ -347,6 +391,8 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame('0.0', BC::fmod('20', '4.0', 1));
         self::assertSame('0.0', BC::fmod('10.5', '3.5', 1));
         self::assertSame('0.3', BC::fmod('10.2', '3.3', 1));
+
+        self::assertSame('-0.000559999', BC::fmod(9.9999E-10, -5.6E-4, 9));
     }
 
     /**
@@ -359,6 +405,8 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame('12193263111263526900', BC::mul('1234567890', '9876543210'));
         self::assertSame('3.75', BC::mul('2.5', '1.5', 2));
         self::assertSame('3.97', BC::mul('2.555', '1.555', 2));
+
+        self::assertSame('-0.005599944', BC::mul(9.9999E-2, -5.6E-2, 9));
     }
 
     /**
@@ -370,6 +418,8 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame('-32', BC::pow('-2', '5', 4));
         self::assertSame('18446744073709551616', BC::pow('2', '64'));
         self::assertSame('-108.88', BC::pow('-2.555', '5', 2));
+
+        self::assertSame('63998080023999840000.599998800', BC::pow(19.9999E+2, 6, 9));
     }
 
     /**
@@ -380,6 +430,8 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame('4', BC::powMod('5', '2', '7'));
         self::assertSame('-4', BC::powMod('-2', '5', '7'));
         self::assertSame('790', BC::powMod('10', '2147483648', '2047'));
+
+        self::assertFalse(BC::powMod(9.9999E-2, -5.6E-2, 9));
     }
 
     /**
@@ -390,5 +442,7 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame('3', BC::sqrt('9'));
         self::assertSame('3.07', BC::sqrt('9.444', 2));
         self::assertSame('43913234134.28826', BC::sqrt('1928372132132819737213', 5));
+
+        self::assertSame('0.31', BC::sqrt(9.9999E-2, 2));
     }
 }

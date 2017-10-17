@@ -49,7 +49,12 @@ class BC
             if ('+' === $regs[2]) {
                 $number = self::mul(self::pow(10, $regs[3]), $regs[1]);
             } else if ('-' === $regs[2]) {
-                $number = self::div($regs[1], self::pow(10, $regs[3], $regs[3]), $regs[3]);
+                $length = $regs[3];
+                $check = explode('.',  $regs[1]);
+                if (!empty($check[1])) {
+                    $length += strlen($check[1]);
+                }
+                $number = self::div($regs[1], self::pow(10, $regs[3], $regs[3]), $length);
             }
         }
         return self::checkNumber($number);
@@ -80,6 +85,9 @@ class BC
      */
     public static function pow($leftOperand, $rightOperand, $scale = null)
     {
+        $leftOperand = self::convertScientificNotationToString($leftOperand);
+        $rightOperand = self::convertScientificNotationToString($rightOperand);
+
         return bcpow($leftOperand, $rightOperand, $scale);
     }
 
