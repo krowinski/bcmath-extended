@@ -240,6 +240,9 @@ class BC
      */
     public static function add($leftOperand, $rightOperand, $scale = null)
     {
+        if (null === $scale) {
+            return bcadd($leftOperand, $rightOperand);
+        }
         return bcadd($leftOperand, $rightOperand, $scale);
     }
 
@@ -251,6 +254,9 @@ class BC
      */
     public static function comp($leftOperand, $rightOperand, $scale = null)
     {
+        if (null === $scale) {
+            return bccomp($leftOperand, $rightOperand);
+        }
         return bccomp($leftOperand, $rightOperand, $scale);
     }
 
@@ -325,6 +331,9 @@ class BC
      */
     public static function pow($leftOperand, $rightOperand, $scale = null)
     {
+        if (null === $scale) {
+            return bcpow($leftOperand, $rightOperand);
+        }
         return bcpow($leftOperand, $rightOperand, $scale);
     }
 
@@ -337,6 +346,9 @@ class BC
      */
     public static function powMod($leftOperand, $rightOperand, $modulus, $scale = null)
     {
+        if (null === $scale) {
+            return bcpowmod($leftOperand, $rightOperand, $modulus);
+        }
         return bcpowmod($leftOperand, $rightOperand, $modulus, $scale);
     }
 
@@ -347,6 +359,9 @@ class BC
      */
     public static function sqrt($operand, $scale = null)
     {
+        if (null === $scale) {
+            return bcsqrt($operand);
+        }
         return bcsqrt($operand, $scale);
     }
 
@@ -358,6 +373,9 @@ class BC
      */
     public static function sub($leftOperand, $rightOperand, $scale = null)
     {
+        if (null === $scale) {
+            return bcsub($leftOperand, $rightOperand);
+        }
         return bcsub($leftOperand, $rightOperand, $scale);
     }
 }
