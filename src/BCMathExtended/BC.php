@@ -242,12 +242,12 @@ class BC
         $rightOperand = self::convertScientificNotationToString($rightOperand);
 
         if (null === $scale) {
-            return bccomp($leftOperand, $rightOperand);
+            return bccomp($leftOperand, $rightOperand, max(strlen($leftOperand), strlen($rightOperand)));
         }
         return bccomp(
             $leftOperand,
             $rightOperand,
-            null === $scale ? max(strlen($leftOperand), strlen($rightOperand)) : $scale
+            $scale
         );
     }
 
@@ -357,16 +357,18 @@ class BC
     }
 
     /**
-     * @param string $leftOperand
-     * @param string $modulus
+     * @param string $operand
+     * @param int $scale
      * @return string
      */
-    public static function mod($leftOperand, $modulus)
+    public static function sqrt($operand, $scale = null)
     {
-        return bcmod(
-            self::convertScientificNotationToString($leftOperand),
-            $modulus
-        );
+        $operand = self::convertScientificNotationToString($operand);
+
+        if (null === $scale) {
+            return bcsqrt($operand);
+        }
+        return bcsqrt($operand, $scale);
     }
 
     /**
@@ -398,6 +400,19 @@ class BC
 
     /**
      * @param string $leftOperand
+     * @param string $modulus
+     * @return string
+     */
+    public static function mod($leftOperand, $modulus)
+    {
+        return bcmod(
+            self::convertScientificNotationToString($leftOperand),
+            $modulus
+        );
+    }
+
+    /**
+     * @param string $leftOperand
      * @param string $rightOperand
      * @param string $modulus
      * @param int $scale
@@ -412,20 +427,5 @@ class BC
             return bcpowmod($leftOperand, $rightOperand, $modulus);
         }
         return bcpowmod($leftOperand, $rightOperand, $modulus, $scale);
-    }
-
-    /**
-     * @param string $operand
-     * @param int $scale
-     * @return string
-     */
-    public static function sqrt($operand, $scale = null)
-    {
-        $operand = self::convertScientificNotationToString($operand);
-
-        if (null === $scale) {
-            return bcsqrt($operand);
-        }
-        return bcsqrt($operand, $scale);
     }
 }
