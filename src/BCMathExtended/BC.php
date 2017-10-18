@@ -342,6 +342,48 @@ class BC
 
     /**
      * @param string $leftOperand
+     * @param string $rightOperand
+     * @param int $scale
+     * @return string
+     */
+    public static function add($leftOperand, $rightOperand, $scale = null)
+    {
+        if (null === $scale) {
+            return bcadd($leftOperand, $rightOperand);
+        }
+        return bcadd($leftOperand, $rightOperand, $scale);
+    }
+
+    /**
+     * @param string $leftOperand
+     * @param string $rightOperand
+     * @param int $scale
+     * @return int
+     */
+    public static function comp($leftOperand, $rightOperand, $scale = null)
+    {
+        if (null === $scale) {
+            return bccomp($leftOperand, $rightOperand);
+        }
+        return bccomp($leftOperand, $rightOperand, $scale);
+    }
+
+    /**
+     * @param string $leftOperand
+     * @param string $rightOperand
+     * @param int $scale
+     * @return string
+     */
+    public static function div($leftOperand, $rightOperand, $scale = null)
+    {
+        if (null === $scale) {
+            return bcdiv($leftOperand, $rightOperand);
+        }
+        return bcdiv($leftOperand, $rightOperand, $scale);
+    }
+
+    /**
+     * @param string $leftOperand
      * @param string $modulus
      * @return string
      */
@@ -383,12 +425,43 @@ class BC
     /**
      * @param string $leftOperand
      * @param string $rightOperand
+     * @param int $scale
+     * @return string
+     */
+    public static function mul($leftOperand, $rightOperand, $scale = null)
+    {
+        if (null === $scale) {
+            return bcmul($leftOperand, $rightOperand);
+        }
+        return bcmul($leftOperand, $rightOperand, $scale);
+    }
+
+    /**
+     * @param string $leftOperand
+     * @param string $rightOperand
+     * @param int $scale
+     * @return string
+     */
+    public static function pow($leftOperand, $rightOperand, $scale = null)
+    {
+        if (null === $scale) {
+            return bcpow($leftOperand, $rightOperand);
+        }
+        return bcpow($leftOperand, $rightOperand, $scale);
+    }
+
+    /**
+     * @param string $leftOperand
+     * @param string $rightOperand
      * @param string $modulus
      * @param int $scale
      * @return string
      */
     public static function powMod($leftOperand, $rightOperand, $modulus, $scale = null)
     {
+        if (null === $scale) {
+            return bcpowmod($leftOperand, $rightOperand, $modulus);
+        }
         return bcpowmod(
             self::convertScientificNotationToString($leftOperand),
             self::convertScientificNotationToString($rightOperand),
@@ -404,6 +477,23 @@ class BC
      */
     public static function sqrt($operand, $scale = null)
     {
+        if (null === $scale) {
+            return bcsqrt($operand);
+        }
         return bcsqrt($operand, $scale);
+    }
+
+    /**
+     * @param string $leftOperand
+     * @param string $rightOperand
+     * @param int $scale
+     * @return string
+     */
+    public static function sub($leftOperand, $rightOperand, $scale = null)
+    {
+        if (null === $scale) {
+            return bcsub($leftOperand, $rightOperand);
+        }
+        return bcsub($leftOperand, $rightOperand, $scale);
     }
 }

@@ -232,6 +232,9 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame('2', BC::min(6, 3, 2));
         self::assertSame('5', BC::min(100, 999, 5));
 
+        BC::setScale(2);
+        self::assertSame('7.20', BC::min('7.30', '7.20'));
+
         self::assertSame('3', BC::min(array(3, 5, 677)));
         self::assertSame('-677', BC::min(array(-3, -5, -677)));
 
@@ -312,7 +315,12 @@ class BCTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldAdd()
     {
+        BC::setScale(0);
         self::assertSame('3', BC::add('1', '2'));
+
+        BC::setScale(2);
+        self::assertSame('2.05', BC::add('1', '1.05'));
+
         self::assertSame('4.0000', BC::add('-1', '5', 4));
         self::assertSame('8728932003911564969352217864684.00', BC::add('1928372132132819737213', '8728932001983192837219398127471', 2));
 
@@ -324,7 +332,12 @@ class BCTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldSub()
     {
+        BC::setScale(0);
         self::assertSame('-1', BC::sub('1', '2'));
+
+        BC::setScale(2);
+        self::assertSame('-1.50', BC::sub('1', '2.5'));
+
         self::assertSame('-6.0000', BC::sub('-1', '5', 4));
         self::assertSame('8728932000054820705086578390258.00', BC::sub('8728932001983192837219398127471', '1928372132132819737213', 2));
 
@@ -336,6 +349,9 @@ class BCTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldComp()
     {
+        BC::setScale(1);
+        self::assertSame(BC::COMPARE_RIGHT_GRATER, BC::comp('100.0', '100.5'));
+
         self::assertSame(BC::COMPARE_RIGHT_GRATER, BC::comp('-1', '5', 4));
         self::assertSame(BC::COMPARE_RIGHT_GRATER, BC::comp('1928372132132819737213', '8728932001983192837219398127471'));
         self::assertSame(BC::COMPARE_EQUAL, BC::comp('1.00000000000000000001', '1', 2));
@@ -362,7 +378,11 @@ class BCTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldDiv()
     {
+        BC::setScale(0);
         self::assertSame('0', BC::div('1', '2'));
+        BC::setScale(2);
+        self::assertSame('0.50', BC::div('1', '2'));
+
         self::assertSame('0.50', BC::div('1', '2', 2));
         self::assertSame('-0.2000', BC::div('-1', '5', 4));
         self::assertSame('4526580661.75', BC::div('8728932001983192837219398127471', '1928372132132819737213', 2));
@@ -414,7 +434,12 @@ class BCTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldPow()
     {
+        BC::setScale(0);
         self::assertSame('1', BC::pow('1', '2'));
+
+        BC::setScale(2);
+        self::assertSame('74.08', BC::pow('4.2', '3'));
+
         self::assertSame('-32', BC::pow('-2', '5', 4));
         self::assertSame('18446744073709551616', BC::pow('2', '64'));
         self::assertSame('-108.88', BC::pow('-2.555', '5', 2));
@@ -427,6 +452,7 @@ class BCTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldPowMod()
     {
+        BC::setScale(0);
         self::assertSame('4', BC::powMod('5', '2', '7'));
         self::assertSame('-4', BC::powMod('-2', '5', '7'));
         self::assertSame('790', BC::powMod('10', '2147483648', '2047'));
