@@ -387,7 +387,8 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame('-0.2000', BC::div('-1', '5', 4));
         self::assertSame('4526580661.75', BC::div('8728932001983192837219398127471', '1928372132132819737213', 2));
 
-        self::assertSame('0', BC::div(9.9999E-10, 10));
+        self::assertSame(9.9999E-11, (float)BC::div(9.9999E-10, 10, 15));
+        self::assertSame('0.000000000099999', BC::div(9.9999E-10, 10, 15));
     }
 
     /**

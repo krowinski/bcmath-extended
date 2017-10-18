@@ -50,7 +50,7 @@ class BC
                 $number = self::mul(self::pow(10, $regs[3]), $regs[1]);
             } else if ('-' === $regs[2]) {
                 $length = $regs[3];
-                $check = explode('.',  $regs[1]);
+                $check = explode('.', $regs[1]);
                 if (!empty($check[1])) {
                     $length += strlen($check[1]);
                 }
@@ -88,6 +88,9 @@ class BC
         $leftOperand = self::convertScientificNotationToString($leftOperand);
         $rightOperand = self::convertScientificNotationToString($rightOperand);
 
+        if (null === $scale) {
+            return bcpow($leftOperand, $rightOperand);
+        }
         return bcpow($leftOperand, $rightOperand, $scale);
     }
 
@@ -147,8 +150,13 @@ class BC
      */
     public static function sub($leftOperand, $rightOperand, $scale = null)
     {
-        return bcsub(self::convertScientificNotationToString($leftOperand),
-            self::convertScientificNotationToString($rightOperand), $scale);
+        $leftOperand = self::convertScientificNotationToString($leftOperand);
+        $rightOperand = self::convertScientificNotationToString($rightOperand);
+
+        if (null === $scale) {
+            return bcsub($leftOperand, $rightOperand);
+        }
+        return bcsub($leftOperand, $rightOperand, $scale);
     }
 
     /**
@@ -159,11 +167,13 @@ class BC
      */
     public static function add($leftOperand, $rightOperand, $scale = null)
     {
-        return bcadd(
-            self::convertScientificNotationToString($leftOperand),
-            self::convertScientificNotationToString($rightOperand),
-            $scale
-        );
+        $leftOperand = self::convertScientificNotationToString($leftOperand);
+        $rightOperand = self::convertScientificNotationToString($rightOperand);
+
+        if (null === $scale) {
+            return bcadd($leftOperand, $rightOperand);
+        }
+        return bcadd($leftOperand, $rightOperand, $scale);
     }
 
     /**
@@ -228,9 +238,15 @@ class BC
      */
     public static function comp($leftOperand, $rightOperand, $scale = null)
     {
+        $leftOperand = self::convertScientificNotationToString($leftOperand);
+        $rightOperand = self::convertScientificNotationToString($rightOperand);
+
+        if (null === $scale) {
+            return bccomp($leftOperand, $rightOperand);
+        }
         return bccomp(
-            self::convertScientificNotationToString($leftOperand),
-            self::convertScientificNotationToString($rightOperand),
+            $leftOperand,
+            $rightOperand,
             null === $scale ? max(strlen($leftOperand), strlen($rightOperand)) : $scale
         );
     }
@@ -336,50 +352,8 @@ class BC
      */
     public static function getScale()
     {
-        $sqrt = bcsqrt('2');
+        $sqrt = self::sqrt('2');
         return strlen(substr($sqrt, strpos($sqrt, '.') + 1));
-    }
-
-    /**
-     * @param string $leftOperand
-     * @param string $rightOperand
-     * @param int $scale
-     * @return string
-     */
-    public static function add($leftOperand, $rightOperand, $scale = null)
-    {
-        if (null === $scale) {
-            return bcadd($leftOperand, $rightOperand);
-        }
-        return bcadd($leftOperand, $rightOperand, $scale);
-    }
-
-    /**
-     * @param string $leftOperand
-     * @param string $rightOperand
-     * @param int $scale
-     * @return int
-     */
-    public static function comp($leftOperand, $rightOperand, $scale = null)
-    {
-        if (null === $scale) {
-            return bccomp($leftOperand, $rightOperand);
-        }
-        return bccomp($leftOperand, $rightOperand, $scale);
-    }
-
-    /**
-     * @param string $leftOperand
-     * @param string $rightOperand
-     * @param int $scale
-     * @return string
-     */
-    public static function div($leftOperand, $rightOperand, $scale = null)
-    {
-        if (null === $scale) {
-            return bcdiv($leftOperand, $rightOperand);
-        }
-        return bcdiv($leftOperand, $rightOperand, $scale);
     }
 
     /**
@@ -407,7 +381,7 @@ class BC
 
         // From PHP 7.2 on, bcmod can handle real numbers
         if (version_compare(PHP_VERSION, '7.2.0') >= 0) {
-            return bcmod($leftOperand, $modulus);
+            return self::mod($leftOperand, $modulus);
         }
 
         // mod(a, b) = a - b * floor(a/b)
@@ -425,49 +399,19 @@ class BC
     /**
      * @param string $leftOperand
      * @param string $rightOperand
-     * @param int $scale
-     * @return string
-     */
-    public static function mul($leftOperand, $rightOperand, $scale = null)
-    {
-        if (null === $scale) {
-            return bcmul($leftOperand, $rightOperand);
-        }
-        return bcmul($leftOperand, $rightOperand, $scale);
-    }
-
-    /**
-     * @param string $leftOperand
-     * @param string $rightOperand
-     * @param int $scale
-     * @return string
-     */
-    public static function pow($leftOperand, $rightOperand, $scale = null)
-    {
-        if (null === $scale) {
-            return bcpow($leftOperand, $rightOperand);
-        }
-        return bcpow($leftOperand, $rightOperand, $scale);
-    }
-
-    /**
-     * @param string $leftOperand
-     * @param string $rightOperand
      * @param string $modulus
      * @param int $scale
      * @return string
      */
     public static function powMod($leftOperand, $rightOperand, $modulus, $scale = null)
     {
+        $leftOperand = self::convertScientificNotationToString($leftOperand);
+        $rightOperand = self::convertScientificNotationToString($rightOperand);
+
         if (null === $scale) {
             return bcpowmod($leftOperand, $rightOperand, $modulus);
         }
-        return bcpowmod(
-            self::convertScientificNotationToString($leftOperand),
-            self::convertScientificNotationToString($rightOperand),
-            $modulus,
-            $scale
-        );
+        return bcpowmod($leftOperand, $rightOperand, $modulus, $scale);
     }
 
     /**
@@ -477,23 +421,11 @@ class BC
      */
     public static function sqrt($operand, $scale = null)
     {
+        $operand = self::convertScientificNotationToString($operand);
+
         if (null === $scale) {
             return bcsqrt($operand);
         }
         return bcsqrt($operand, $scale);
-    }
-
-    /**
-     * @param string $leftOperand
-     * @param string $rightOperand
-     * @param int $scale
-     * @return string
-     */
-    public static function sub($leftOperand, $rightOperand, $scale = null)
-    {
-        if (null === $scale) {
-            return bcsub($leftOperand, $rightOperand);
-        }
-        return bcsub($leftOperand, $rightOperand, $scale);
     }
 }
