@@ -45,7 +45,7 @@ class BC
      */
     public static function convertScientificNotationToString($number)
     {
-        if (preg_match("/(-?\d\.\d+)E([+|-])(\d+)/i", $number, $regs)) {
+        if (false !== stripos($number, 'E') && preg_match('/(-?\d\.\d+)E([+|-])(\d+)/i', $number, $regs)) {
             if ('+' === $regs[2]) {
                 $number = self::mul(self::pow(10, $regs[3]), $regs[1]);
             } else if ('-' === $regs[2]) {
