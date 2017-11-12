@@ -27,7 +27,7 @@ class BC
      */
     public static function round($number, $precision = 0)
     {
-        $number = (string)self::convertScientificNotationToString($number);
+        $number = self::convertScientificNotationToString($number);
         if (self::checkIsFloat($number)) {
             if (self::isNegative($number)) {
                 return self::sub($number, '0.' . str_repeat('0', $precision) . '5', $precision);
@@ -45,20 +45,39 @@ class BC
      */
     public static function convertScientificNotationToString($number)
     {
-        if (false !== stripos($number, 'E') && preg_match('/(-?\d\.\d+)E([+|-])(\d+)/i', $number, $regs)) {
+        // check if number is in scientific notation, first use stripos as is faster then preg_match
+        if (false !== stripos($number, 'E') && preg_match('/(-?\d+\.\d+)E([+|-])(\d+)/i', $number, $regs)) {
+            // calculate final scale of number
+            $scale = $regs[3] + self::getDecimalsLengthFromNumber($regs[1]);
+            $pow = self::pow(10, $regs[3], $regs[3]);
             if ('+' === $regs[2]) {
-                $number = self::mul(self::pow(10, $regs[3]), $regs[1]);
+                $number = self::mul($pow, $regs[1], $scale);
             } else if ('-' === $regs[2]) {
-                $length = $regs[3];
-                $check = explode('.', $regs[1]);
-                if (!empty($check[1])) {
-                    $length += strlen($check[1]);
-                }
-                $number = self::div($regs[1], self::pow(10, $regs[3], $regs[3]), $length);
+                $number = self::div($regs[1], $pow, $scale);
             }
+            // remove unnecessary 0 from 0.000 is a 0
+            $number = rtrim($number, '0');
+            // if you remove 0 you must clean dot
+            $number = rtrim($number, '.');
         }
+
         return self::checkNumber($number);
     }
+
+    /**
+     * @param int|string|float $number
+     * @return int
+     */
+    private static function getDecimalsLengthFromNumber($number)
+    {
+        $check = explode('.', $number);
+        if (!empty($check[1])) {
+            return strlen($check[1]);
+        }
+
+        return 0;
+    }
+
 
     /**
      * @param string $leftOperand
@@ -74,6 +93,7 @@ class BC
         if (null === $scale) {
             return bcmul($leftOperand, $rightOperand);
         }
+
         return bcmul($leftOperand, $rightOperand, $scale);
     }
 
@@ -91,6 +111,7 @@ class BC
         if (null === $scale) {
             return bcpow($leftOperand, $rightOperand);
         }
+
         return bcpow($leftOperand, $rightOperand, $scale);
     }
 
@@ -108,6 +129,7 @@ class BC
         if (null === $scale) {
             return bcdiv($leftOperand, $rightOperand);
         }
+
         return bcdiv($leftOperand, $rightOperand, $scale);
     }
 
@@ -121,6 +143,7 @@ class BC
         if ('-0' === $number || !is_numeric($number)) {
             return '0';
         }
+
         return $number;
     }
 
@@ -156,6 +179,7 @@ class BC
         if (null === $scale) {
             return bcsub($leftOperand, $rightOperand);
         }
+
         return bcsub($leftOperand, $rightOperand, $scale);
     }
 
@@ -173,6 +197,7 @@ class BC
         if (null === $scale) {
             return bcadd($leftOperand, $rightOperand);
         }
+
         return bcadd($leftOperand, $rightOperand, $scale);
     }
 
@@ -182,7 +207,7 @@ class BC
      */
     public static function abs($number)
     {
-        $number = (string)self::convertScientificNotationToString($number);
+        $number = self::convertScientificNotationToString($number);
 
         if (self::isNegative($number)) {
             $number = (string)substr($number, 1);
@@ -198,8 +223,8 @@ class BC
      */
     public static function rand($min, $max)
     {
-        $max = (string)self::convertScientificNotationToString($max);
-        $min = (string)self::convertScientificNotationToString($min);
+        $max = self::convertScientificNotationToString($max);
+        $min = self::convertScientificNotationToString($min);
 
         $difference = self::add(self::sub($max, $min), 1);
         $randPercent = self::div(mt_rand(), mt_getrandmax(), 8);
@@ -244,6 +269,7 @@ class BC
         if (null === $scale) {
             return bccomp($leftOperand, $rightOperand, max(strlen($leftOperand), strlen($rightOperand)));
         }
+
         return bccomp(
             $leftOperand,
             $rightOperand,
@@ -281,11 +307,18 @@ class BC
      */
     public static function roundDown($number, $precision = 0)
     {
-        $number = (string)self::convertScientificNotationToString($number);
+        $number = self::convertScientificNotationToString($number);
         $multiply = self::pow(10, (string)abs($precision));
+
         return $precision < 0 ?
-            self::mul(self::floor(self::div($number, $multiply)), $multiply, $precision) :
-            self::div(self::floor(self::mul($number, $multiply)), $multiply, $precision);
+            self::mul(
+                self::floor(self::div($number, $multiply, self::getDecimalsLengthFromNumber($number))), $multiply,
+                $precision
+            ) :
+            self::div(
+                self::floor(self::mul($number, $multiply, self::getDecimalsLengthFromNumber($number))), $multiply,
+                $precision
+            );
     }
 
     /**
@@ -294,7 +327,7 @@ class BC
      */
     public static function floor($number)
     {
-        $number = (string)self::convertScientificNotationToString($number);
+        $number = self::convertScientificNotationToString($number);
         if (self::checkIsFloat($number) && self::checkIsFloatCleanZeros($number)) {
             $result = 0;
             if (self::isNegative($number)) {
@@ -322,11 +355,18 @@ class BC
      */
     public static function roundUp($number, $precision = 0)
     {
-        $number = (string)self::convertScientificNotationToString($number);
+        $number = self::convertScientificNotationToString($number);
         $multiply = self::pow(10, (string)abs($precision));
+
         return $precision < 0 ?
-            self::mul(self::ceil(self::div($number, $multiply)), $multiply, $precision) :
-            self::div(self::ceil(self::mul($number, $multiply)), $multiply, $precision);
+            self::mul(
+                self::ceil(self::div($number, $multiply, self::getDecimalsLengthFromNumber($number))), $multiply,
+                $precision
+            ) :
+            self::div(
+                self::ceil(self::mul($number, $multiply, self::getDecimalsLengthFromNumber($number))), $multiply,
+                $precision
+            );
     }
 
     /**
@@ -335,7 +375,7 @@ class BC
      */
     public static function ceil($number)
     {
-        $number = (string)self::convertScientificNotationToString($number);
+        $number = self::convertScientificNotationToString($number);
         if (self::checkIsFloat($number) && self::checkIsFloatCleanZeros($number)) {
             $result = 1;
             if (self::isNegative($number)) {
@@ -353,6 +393,7 @@ class BC
     public static function getScale()
     {
         $sqrt = self::sqrt('2');
+
         return strlen(substr($sqrt, strpos($sqrt, '.') + 1));
     }
 
@@ -368,6 +409,7 @@ class BC
         if (null === $scale) {
             return bcsqrt($operand);
         }
+
         return bcsqrt($operand, $scale);
     }
 
@@ -426,6 +468,7 @@ class BC
         if (null === $scale) {
             return bcpowmod($leftOperand, $rightOperand, $modulus);
         }
+
         return bcpowmod($leftOperand, $rightOperand, $modulus, $scale);
     }
 }
