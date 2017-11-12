@@ -3,12 +3,13 @@
 namespace BCMathExtended\Tests\Unit;
 
 use BCMathExtended\BC;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class BCTest
  * @package BCMathExtended\Tests\Unit
  */
-class BCTest extends \PHPUnit_Framework_TestCase
+class BCTest extends TestCase
 {
     /**
      * @return array
@@ -370,72 +371,114 @@ class BCTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @test
+     * @return array
      */
-    public function shouldRoundUp()
+    public function roundUpProvider()
     {
-        self::assertSame('663', BC::roundUp(662.79));
-        self::assertSame('662.8', BC::roundUp(662.79, 1));
-        self::assertSame('60', BC::roundUp(54.1, -1));
-        self::assertSame('60', BC::roundUp(55.1, -1));
-        self::assertSame('-23.6', BC::roundUp(-23.62, 1));
-        self::assertSame('4', BC::roundUp(3.2));
-        self::assertSame('77', BC::roundUp(76.9));
-        self::assertSame('3.142', BC::roundUp(3.14159, 3));
-        self::assertSame('-3.1', BC::roundUp(-3.14159, 1));
-        self::assertSame('31500', BC::roundUp(31415.92654, -2));
-        self::assertSame('31420', BC::roundUp(31415.92654, -1));
-        self::assertSame('0.0119', BC::roundUp(0.0119, 4));
-
-        self::assertSame('0', BC::roundUp('-0'));
-        self::assertSame('0', BC::roundUp(''));
-        self::assertSame('0', BC::roundUp(null));
-        self::assertSame('0', BC::roundUp('0-'));
-
-        self::assertSame('1', BC::roundUp(9.9999E-10));
+        return [
+            ['663', 662.79],
+            ['662.8', 662.79, 1],
+            ['60', 54.1, -1],
+            ['60', 55.1, -1],
+            ['-23.6', -23.62, 1],
+            ['4', 3.2],
+            ['77', 76.9],
+            ['3.142', 3.14159, 3],
+            ['-3.1', -3.14159, 1],
+            ['31500', 31415.92654, -2],
+            ['31420', 31415.92654, -1],
+            ['0.0119', 0.0119, 4],
+            ['0', '-0'],
+            ['0', ''],
+            ['0', null],
+            ['0', '0-'],
+            ['1', 9.9999E-10],
+        ];
     }
 
     /**
      * @test
+     * @dataProvider roundUpProvider
+     * @param string $expected
+     * @param int|float|string $number
+     * @param int $precision
      */
-    public function shouldRoundDown()
+    public function shouldRoundUp($expected, $number, $precision = 0)
     {
-        self::assertSame('662', BC::roundDown(662.79));
-        self::assertSame('662.7', BC::roundDown(662.79, 1));
-        self::assertSame('50', BC::roundDown(54.1, -1));
-        self::assertSame('50', BC::roundDown(55.1, -1));
-        self::assertSame('-23.7', BC::roundDown(-23.62, 1));
-        self::assertSame('3', BC::roundDown(3.2));
-        self::assertSame('76', BC::roundDown(76.9));
-        self::assertSame('3.141', BC::roundDown(3.14159, 3));
-        self::assertSame('-3.2', BC::roundDown(-3.14159, 1));
-        self::assertSame('31400', BC::roundDown(31415.92654, -2));
-        self::assertSame('31410', BC::roundDown(31415.92654, -1));
-        self::assertSame('0.0119', BC::roundDown(0.0119, 4));
+        $number = BC::roundUp($number, $precision);
+        self::assertInternalType('string', $number);
+        self::assertSame($expected, $number);
+    }
 
-        self::assertSame('0', BC::roundDown('-0'));
-        self::assertSame('0', BC::roundDown(''));
-        self::assertSame('0', BC::roundDown(null));
-        self::assertSame('0', BC::roundDown('0-'));
-
-        self::assertSame('0', BC::roundDown(9.9999E-10));
+    /**
+     * @return array
+     */
+    public function roundDownProvider()
+    {
+        return [
+            ['662', 662.79],
+            ['662.7', 662.79, 1],
+            ['50', 54.1, -1],
+            ['50', 55.1, -1],
+            ['-23.7', -23.62, 1],
+            ['3', 3.2],
+            ['76', 76.9],
+            ['3.141', 3.14159, 3],
+            ['-3.2', -3.14159, 1],
+            ['31400', 31415.92654, -2],
+            ['31410', 31415.92654, -1],
+            ['0.0119', 0.0119, 4],
+            ['0', '-0'],
+            ['0', ''],
+            ['0', null],
+            ['0', '0-'],
+            ['0', 9.9999E-10],
+        ];
     }
 
     /**
      * @test
+     * @dataProvider roundDownProvider
+     * @param string $expected
+     * @param int|float|string $number
+     * @param int $precision
      */
-    public function shouldAdd()
+    public function shouldRoundDown($expected, $number, $precision = 0)
     {
-        self::assertSame('3', BC::add('1', '2', 0));
-        self::assertSame('2', BC::add('1', '1', 0));
-        self::assertSame('15', BC::add('10', '5', 0));
-        self::assertSame('2.05', BC::add('1', '1.05', 2));
-        self::assertSame('4.0000', BC::add('-1', '5', 4));
-        self::assertSame(
-            '8728932003911564969352217864684.00',
-            BC::add('1928372132132819737213', '8728932001983192837219398127471', 2)
-        );
-        self::assertSame('-0.00055999', BC::add(9.9999E-10, -5.6E-4, 8));
+        $number = BC::roundDown($number, $precision);
+        self::assertInternalType('string', $number);
+        self::assertSame($expected, $number);
+    }
+
+    /**
+     * @return array
+     */
+    public function addProvider()
+    {
+        return [
+            ['3', '1', '2'],
+            ['2', '1', '1'],
+            ['15', '10', '5'],
+            ['2.05', '1', '1.05', 2],
+            ['4.0000', '-1', '5', 4],
+            ['8728932003911564969352217864684.00', '1928372132132819737213', '8728932001983192837219398127471', 2],
+            ['-0.00055999', 9.9999E-10, -5.6E-4, 8],
+        ];
+    }
+
+    /**
+     * @test
+     * @param int|null $scale
+     * @param string $expected
+     * @param string $left
+     * @param string $right
+     * @dataProvider addProvider
+     */
+    public function shouldAdd($expected, $left, $right, $scale = 0)
+    {
+        $number = BC::add($left, $right, $scale);
+        self::assertInternalType('string', $number);
+        self::assertSame($expected, $number);
     }
 
     /**
@@ -465,20 +508,34 @@ class BCTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @test
+     * @return array
      */
-    public function shouldSub()
+    public function subProvider()
     {
-        self::assertSame('-1', BC::sub('1', '2', 0));
-        self::assertSame('0', BC::sub('1', '1', 0));
-        self::assertSame('5', BC::sub('10', '5', 0));
-        self::assertSame('-1.50', BC::sub('1', '2.5', 2));
-        self::assertSame('-6.0000', BC::sub('-1', '5', 4));
-        self::assertSame(
-            '8728932000054820705086578390258.00',
-            BC::sub('8728932001983192837219398127471', '1928372132132819737213', 2)
-        );
-        self::assertSame('0.00056000', BC::sub(9.9999E-10, -5.6E-4, 8));
+        return [
+            ['-1', '1', '2'],
+            ['0', '1', '1'],
+            ['5', '10', '5'],
+            ['-1.50', '1', '2.5', 2],
+            ['-6.0000', '-1', '5', 4],
+            ['8728932000054820705086578390258.00', '8728932001983192837219398127471', '1928372132132819737213', 2],
+            ['0.00056000', 9.9999E-10, -5.6E-4, 8],
+        ];
+    }
+
+    /**
+     * @test
+     * @param int|null $scale
+     * @param string $expected
+     * @param string $left
+     * @param string $right
+     * @dataProvider subProvider
+     */
+    public function shouldSub($expected, $left, $right, $scale = 0)
+    {
+        $number = BC::sub($left, $right, $scale);
+        self::assertInternalType('string', $number);
+        self::assertSame($expected, $number);
     }
 
     /**
@@ -542,18 +599,30 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame($expected, $scale);
     }
 
-    /**
-     * @test
-     */
-    public function shouldDiv()
+    public function divProvider()
     {
-        self::assertSame('0.50', BC::div('1', '2', 2));
-        self::assertSame('-0.2000', BC::div('-1', '5', 4));
-        self::assertSame('4526580661.75', BC::div('8728932001983192837219398127471', '1928372132132819737213', 2));
-        self::assertSame(9.9999E-11, (float)BC::div(9.9999E-10, 10, 15));
-        self::assertSame('0.000000000099999', BC::div(9.9999E-10, 10, 15));
+        return [
+            ['0.50', '1', '2', 2],
+            ['-0.2000', '-1', '5', 4],
+            ['4526580661.75', '8728932001983192837219398127471', '1928372132132819737213', 2],
+            ['0.000000000099999', '9.9999E-10', '10', 15],
+        ];
     }
 
+    /**
+     * @test
+     * @dataProvider divProvider
+     * @param string $expected
+     * @param string $left
+     * @param string $right
+     * @param int $scale
+     */
+    public function shouldDiv($expected, $left, $right, $scale)
+    {
+        $number = BC::div($left, $right, $scale);
+        self::assertInternalType('string', $number);
+        self::assertSame($expected, $number);
+    }
 
     /**
      * @test
@@ -568,29 +637,54 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame('0.50', BC::div('1', '2'));
     }
 
-    /**
-     * @test
-     */
-    public function shouldMod()
+    public function modProvider()
     {
-        self::assertSame('1', BC::mod('11', '2'));
-        self::assertSame('-1', BC::mod('-1', '5'));
-        self::assertSame(
-            '1459434331351930289678', BC::mod('8728932001983192837219398127471', '1928372132132819737213')
-        );
-        self::assertSame('0', BC::mod(9.9999E-10, 1));
+        return [
+            ['1', '11', '2'],
+            ['-1', '-1', '5'],
+            ['1459434331351930289678', '8728932001983192837219398127471', '1928372132132819737213'],
+            ['0', 9.9999E-10, 1]
+        ];
     }
 
     /**
      * @test
+     * @dataProvider modProvider
+     * @param string $expected
+     * @param string $left
+     * @param string $right
      */
-    public function shouldFmod()
+    public function shouldMod($expected, $left, $right)
     {
-        self::assertSame('0.8', BC::fmod('10', '9.2', 1));
-        self::assertSame('0.0', BC::fmod('20', '4.0', 1));
-        self::assertSame('0.0', BC::fmod('10.5', '3.5', 1));
-        self::assertSame('0.3', BC::fmod('10.2', '3.3', 1));
-        self::assertSame('-0.000559999', BC::fmod(9.9999E-10, -5.6E-4, 9));
+        $number = BC::mod($left, $right);
+        self::assertInternalType('string', $number);
+        self::assertSame($expected, $number);
+    }
+
+    public function fmodProvider()
+    {
+        return [
+            ['0.8', '10', '9.2', 1],
+            ['0.0', '20', '4.0', 1],
+            ['0.0', '10.5', '3.5', 1],
+            ['0.3', '10.2', '3.3', 1],
+            ['-0.000559999', 9.9999E-10, -5.6E-4, 9],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider fmodProvider
+     * @param string $expected
+     * @param string $left
+     * @param string $right
+     * @param int $scale
+     */
+    public function shouldFmod($expected, $left, $right, $scale)
+    {
+        $number = BC::fmod($left, $right, $scale);
+        self::assertInternalType('string', $number);
+        self::assertSame($expected, $number);
     }
 
     /**
@@ -640,7 +734,9 @@ class BCTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldMul($leftOperand, $rightOperand, $expected, $scale)
     {
-        self::assertSame($expected, BC::mul($leftOperand, $rightOperand, $scale));
+        $number = BC::mul($leftOperand, $rightOperand, $scale);
+        self::assertInternalType('string', $number);
+        self::assertSame($expected, $number);
     }
 
     /**
@@ -680,7 +776,9 @@ class BCTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldPow($expected, $left, $right, $scale = null)
     {
-        self::assertSame($expected, BC::pow($left, $right, $scale));
+        $number = BC::pow($left, $right, $scale);
+        self::assertInternalType('string', $number);
+        self::assertSame($expected, $number);
     }
 
     /**
@@ -696,26 +794,54 @@ class BCTest extends \PHPUnit_Framework_TestCase
         self::assertSame('74.08', BC::pow('4.2', '3'));
     }
 
-    /**
-     * @test
-     */
-    public function shouldPowMod()
+    public function powModProvider()
     {
-        self::assertSame('4', BC::powMod('5', '2', '7', 0));
-        self::assertSame('-4', BC::powMod('-2', '5', '7', 0));
-        self::assertSame('790', BC::powMod('10', '2147483648', '2047', 0));
-        self::assertFalse(BC::powMod(9.9999E-2, -5.6E-2, 9, 0));
+        return [
+            ['4', '5', '2', '7', 0],
+            ['-4', '-2', '5', '7', 0],
+            ['790', '10', '2147483648', '2047', 0],
+            ['790', 1E+1, 2E+8, 2047, 0],
+        ];
     }
 
     /**
      * @test
+     * @dataProvider powModProvider
+     * @param string $expected
+     * @param string $left
+     * @param string $right
+     * @param string $modulus
+     * @param null|int $scale
      */
-    public function shouldSqrt()
+    public function shouldPowMod($expected, $left, $right, $modulus, $scale)
     {
-        self::assertSame('3', BC::sqrt('9', 0));
-        self::assertSame('3.07', BC::sqrt('9.444', 2));
-        self::assertSame('43913234134.28826', BC::sqrt('1928372132132819737213', 5));
-        self::assertSame('0.31', BC::sqrt(9.9999E-2, 2));
+        $number = BC::powMod($left, $right, $modulus, $scale);
+        self::assertInternalType('string', $number);
+        self::assertSame($expected, $number);
+    }
+
+    public function sqrtProvider()
+    {
+        return [
+            ['3', '9', 0],
+            ['3.07', '9.444', 2],
+            ['43913234134.28826', '1928372132132819737213', 5],
+            ['0.31', 9.9999E-2, 2],
+        ];
+    }
+
+    /**
+     * @test
+     * @param string $expected
+     * @param string $operand
+     * @param int $scale
+     * @dataProvider sqrtProvider
+     */
+    public function shouldSqrt($expected, $operand, $scale)
+    {
+        $number = BC::sqrt($operand, $scale);
+        self::assertInternalType('string', $number);
+        self::assertSame($expected, $number);
     }
 
     /**
