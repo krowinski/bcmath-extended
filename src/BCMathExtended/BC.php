@@ -46,13 +46,13 @@ class BC
     public static function convertScientificNotationToString($number)
     {
         // check if number is in scientific notation, first use stripos as is faster then preg_match
-        if (false !== stripos($number, 'E') && preg_match('/(-?\d+\.\d+)E([+|-])(\d+)/i', $number, $regs)) {
+        if (false !== stripos($number, 'E') && preg_match('/(-?(\d+\.)?\d+)E([+|-])(\d+)/i', $number, $regs)) {
             // calculate final scale of number
-            $scale = $regs[3] + self::getDecimalsLengthFromNumber($regs[1]);
-            $pow = self::pow(10, $regs[3], $regs[3]);
-            if ('+' === $regs[2]) {
+            $scale = $regs[4] + self::getDecimalsLengthFromNumber($regs[1]);
+            $pow = self::pow(10, $regs[4], $scale);
+            if ('+' === $regs[3]) {
                 $number = self::mul($pow, $regs[1], $scale);
-            } else if ('-' === $regs[2]) {
+            } else if ('-' === $regs[3]) {
                 $number = self::div($regs[1], $pow, $scale);
             }
             // remove unnecessary 0 from 0.000 is a 0
