@@ -15,3 +15,23 @@ Installation
 ```sh
 composer require krowinski/bcmath-extended
 ```
+
+Features
+===
+
+- new tool methods
+    - convertScientificNotationToString - converts scientific notation to string
+    - getScale - gets current global scale 
+- new math functions 
+    - round
+    - abs 
+    - rand
+    - max
+    - min
+    - roundDown
+    - roundUp
+    - ceil
+    - fmod
+- proxy for original functions (http://php.net/manual/en/book.bc.php)
+- all functions supports scientific notation
+- all functions are static so it can be easy replaced by this lib

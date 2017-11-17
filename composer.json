@@ -1,6 +1,6 @@
 {
   "name": "krowinski/bcmath-extended",
-  "description": "Extends php BCMath lib for missing functions like floor, ceil, round, abs, min, max, rand for big numbers. Also wraps existing BCMath functions. (more http://php.net/manual/en/book.bc.php)",
+  "description": "Extends php BCMath lib for missing functions like floor, ceil, round, abs, min, max, rand for big numbers. Also wraps existing BCMath functions. (more http://php.net/manual/en/book.bc.php) Supports scientific notation.s",
   "keywords": [
     "bc",
     "bcmath",
@@ -15,7 +15,8 @@
     "floor",
     "abs",
     "arbitrary-precision",
-    "complex-numbers"
+    "complex-numbers",
+    "scientific-notation"
   ],
   "type": "library",
   "require": {
