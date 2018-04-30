@@ -46,14 +46,14 @@ class BC
     public static function convertScientificNotationToString($number)
     {
         // check if number is in scientific notation, first use stripos as is faster then preg_match
-        if (false !== stripos($number, 'E') && preg_match('/(-?(\d+\.)?\d+)E([+|-])(\d+)/i', $number, $regs)) {
+        if (false !== stripos($number, 'E') && preg_match('/(-?(\d+\.)?\d+)E([+-]?)(\d+)/i', $number, $regs)) {
             // calculate final scale of number
             $scale = $regs[4] + self::getDecimalsLengthFromNumber($regs[1]);
             $pow = self::pow(10, $regs[4], $scale);
-            if ('+' === $regs[3]) {
-                $number = self::mul($pow, $regs[1], $scale);
-            } else if ('-' === $regs[3]) {
+            if ('-' === $regs[3]) {
                 $number = self::div($regs[1], $pow, $scale);
+            } else {
+                $number = self::mul($pow, $regs[1], $scale);
             }
             // remove unnecessary 0 from 0.000 is a 0
             $number = rtrim($number, '0');
@@ -425,7 +425,10 @@ class BC
 
         // From PHP 7.2 on, bcmod can handle real numbers
         if (version_compare(PHP_VERSION, '7.2.0') >= 0) {
-            return self::mod($leftOperand, $modulus);
+            if (null === $scale) {
+                return bcmod($leftOperand, $modulus);
+            }
+            return bcmod($leftOperand, $modulus, $scale);
         }
 
         // mod(a, b) = a - b * floor(a/b)
