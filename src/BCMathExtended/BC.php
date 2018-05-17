@@ -68,7 +68,7 @@ class BC
      * @param int|string|float $number
      * @return int
      */
-    private static function getDecimalsLengthFromNumber($number)
+    public static function getDecimalsLengthFromNumber($number)
     {
         $check = explode('.', $number);
         if (!empty($check[1])) {
@@ -423,14 +423,6 @@ class BC
     {
         $leftOperand = self::convertScientificNotationToString($leftOperand);
 
-        // From PHP 7.2 on, bcmod can handle real numbers
-        if (version_compare(PHP_VERSION, '7.2.0') >= 0) {
-            if (null === $scale) {
-                return bcmod($leftOperand, $modulus);
-            }
-            return bcmod($leftOperand, $modulus, $scale);
-        }
-
         // mod(a, b) = a - b * floor(a/b)
         return self::sub(
             $leftOperand,
@@ -450,8 +442,18 @@ class BC
      */
     public static function mod($leftOperand, $modulus)
     {
+        $leftOperand = self::convertScientificNotationToString($leftOperand);
+
+        if (version_compare(PHP_VERSION, '7.2.0') >= 0) {
+            return bcmod(
+                $leftOperand,
+                $modulus,
+                0
+            );
+        }
+
         return bcmod(
-            self::convertScientificNotationToString($leftOperand),
+            $leftOperand,
             $modulus
         );
     }

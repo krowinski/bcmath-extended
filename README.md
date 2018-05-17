@@ -22,6 +22,7 @@ Features
 - new tool methods
     - convertScientificNotationToString - converts scientific notation to string
     - getScale - gets current global scale 
+    - getDecimalsLengthFromNumber - gets amount of decimals 
 - new math functions 
     - round
     - abs 
