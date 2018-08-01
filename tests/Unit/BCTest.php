@@ -948,19 +948,21 @@ class BCTest extends TestCase
 
     /**
      * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Number has to be an integer
      */
     public function shouldFactThrowErrorOnFloat()
     {
-        $this->expectExceptionMessage('Number has to be an integer');
         BC::fact(1.1);
     }
 
     /**
      * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Number has to be greater than or equal to 0
      */
     public function shouldFactThrowErrorOnNegative()
     {
-        $this->expectExceptionMessage('Number has to be greater than or equal to 0');
         BC::fact(-1);
     }
 
