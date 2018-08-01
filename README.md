@@ -33,6 +33,10 @@ Features
     - roundUp
     - ceil
     - fmod
+    - exp
+    - log
+    - fact
+    - pow (now supports fractional)
 - proxy for original functions (http://php.net/manual/en/book.bc.php)
 - all functions supports scientific notation
 - all functions are static so it can be easy replaced by this lib
