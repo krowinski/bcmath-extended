@@ -123,7 +123,8 @@ class BC
     private static function powFractional($leftOperand, $rightOperand, $scale = null)
     {
         // we need to increased scale to get correct results and avoid rounding error
-        $increasedScale = null === $scale ? null : $scale * 2;
+        $increasedScale = null === $scale ? self::getScale() : $scale;
+        $increasedScale *= 2;
         $decimals = explode('.', $rightOperand);
 
         return self::checkNumber(
@@ -499,48 +500,23 @@ class BC
     /**
      * @param string $leftOperand
      * @param string $modulus
-     * @param null|int $scale
+     * @param null $scale
      * @return string
      */
-    public static function fmod($leftOperand, $modulus, $scale = null)
+    public static function mod($leftOperand, $modulus, $scale = null)
     {
         $leftOperand = self::convertScientificNotationToString($leftOperand);
 
-        // mod(a, b) = a - b * floor(a/b)
-        return self::sub(
-            $leftOperand,
-            self::mul(
-                $modulus,
-                self::floor(self::div($leftOperand, $modulus, $scale)),
-                $scale
-            ),
-            $scale
-        );
-    }
+        // bcmod in 7.2 is not working properly - for example bcmod(9.9999E-10, -0.00056, 9) should return '-0.000559999' but returns 0.0000000
 
-    /**
-     * @param string $leftOperand
-     * @param string $modulus
-     * @return string
-     */
-    public static function mod($leftOperand, $modulus)
-    {
-        $leftOperand = self::convertScientificNotationToString($leftOperand);
-
-        // @codeCoverageIgnoreStart
-        if (version_compare(PHP_VERSION, '7.2.0') >= 0) {
-            return bcmod(
-                $leftOperand,
-                $modulus,
-                0
-            );
+        // bcmod in php 5.6< don't support scale and floats
+        // let use this $x - floor($x/$y) * $y;
+        if (null === $scale) {
+            return self::sub($leftOperand, self::mul(self::floor(self::div($leftOperand, $modulus)), $modulus));
         }
 
-        // @codeCoverageIgnoreEnd
-
-        return bcmod(
-            $leftOperand,
-            $modulus
+        return self::sub(
+            $leftOperand, self::mul(self::floor(self::div($leftOperand, $modulus, $scale)), $modulus, $scale), $scale
         );
     }
 
@@ -556,8 +532,14 @@ class BC
         $leftOperand = self::convertScientificNotationToString($leftOperand);
         $rightOperand = self::convertScientificNotationToString($rightOperand);
 
+        // bcpowmod in 5.6 have don't calculate correct results if scale is empty
         if (null === $scale) {
-            return bcpowmod($leftOperand, $rightOperand, $modulus);
+            return self::mod(self::pow($leftOperand, $rightOperand), $modulus);
+        }
+
+        // cant use bcpowmod here as it don't support floats
+        if (self::checkIsFloat($leftOperand) || self::checkIsFloat($rightOperand) || self::checkIsFloat($modulus)) {
+            return self::mod(self::pow($leftOperand, $rightOperand, $scale), $modulus, $scale);
         }
 
         return bcpowmod($leftOperand, $rightOperand, $modulus, $scale);

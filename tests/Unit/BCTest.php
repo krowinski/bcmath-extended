@@ -677,30 +677,12 @@ class BCTest extends TestCase
     public function modProvider()
     {
         return [
-            ['1', '11', '2'],
-            ['-1', '-1', '5'],
-            ['1459434331351930289678', '8728932001983192837219398127471', '1928372132132819737213'],
-            ['0', 9.9999E-10, 1],
-        ];
-    }
-
-    /**
-     * @test
-     * @dataProvider modProvider
-     * @param string $expected
-     * @param string $left
-     * @param string $right
-     */
-    public function shouldMod($expected, $left, $right)
-    {
-        $number = BC::mod($left, $right);
-        self::assertInternalType('string', $number);
-        self::assertSame($expected, $number);
-    }
-
-    public function fmodProvider()
-    {
-        return [
+            ['1', '11', '2', 0],
+            ['-1', '-1', '5', 0],
+            ['1459434331351930289678', '8728932001983192837219398127471', '1928372132132819737213', 0],
+            ['0', 9.9999E-10, 1, 0],
+            ['0.50', 10.5, 2.5, 2],
+            ['0.50', 10.5, 2.5, null],
             ['0.8', '10', '9.2', 1],
             ['0.0', '20', '4.0', 1],
             ['0.0', '10.5', '3.5', 1],
@@ -711,30 +693,17 @@ class BCTest extends TestCase
 
     /**
      * @test
-     * @dataProvider fmodProvider
+     * @dataProvider modProvider
      * @param string $expected
      * @param string $left
      * @param string $right
      * @param int $scale
      */
-    public function shouldFmod($expected, $left, $right, $scale)
+    public function shouldMod($expected, $left, $right, $scale)
     {
-        $number = BC::fmod($left, $right, $scale);
+        $number = BC::mod($left, $right, $scale);
         self::assertInternalType('string', $number);
         self::assertSame($expected, $number);
-    }
-
-    /**
-     * @test
-     */
-    public function shouldFmodUsingGlobalScale()
-    {
-        BC::setScale(0);
-        self::assertSame('1', BC::fmod('10', '9.2'));
-        self::assertSame('0.80', BC::fmod('10', '9.2', 2));
-        BC::setScale(2);
-        self::assertSame('1', BC::fmod('10', '9.2', 0));
-        self::assertSame('0.80', BC::fmod('10', '9.2'));
     }
 
     /**
@@ -777,19 +746,6 @@ class BCTest extends TestCase
     }
 
     /**
-     * @test
-     */
-    public function shouldMulUsingGlobalScale()
-    {
-        BC::setScale(0);
-        self::assertSame('1', BC::fmod('1.5', '3.75'));
-        self::assertSame('1.50', BC::fmod('1.5', '3.75', 2));
-        BC::setScale(2);
-        self::assertSame('1', BC::fmod('1.5', '3.75', 0));
-        self::assertSame('1.50', BC::fmod('1.5', '3.75'));
-    }
-
-    /**
      * @return array
      */
     public function powProvider()
@@ -813,6 +769,7 @@ class BCTest extends TestCase
             ['59.3839', '8', '1.964', 4],
             ['1', '10', '0.0000001', 0],
             ['1.00', '10', '0.0000001', null],
+            ['36.029', '5.1', '2.2', 3],
         ];
     }
 
@@ -987,6 +944,11 @@ class BCTest extends TestCase
             ['790', '10', '2147483648', '2047', 0],
             ['790', 1E+1, 2E+8, 2047, 0],
             ['4.00', '5', '2', '7', null],
+            ['3.70', '5', '2', '7.1', null],
+            ['3.70', '5', '2', '7.1', 2],
+            ['1.00', '4', '4', '3', null],
+            ['0.52', '5.1', '2.2', '7.1', 2],
+            ['0.52', '5.1', '2.2', '7.1', null],
         ];
     }
 
@@ -1041,5 +1003,10 @@ class BCTest extends TestCase
         BC::setScale(2);
         self::assertSame('3', BC::sqrt('9.444', 0));
         self::assertSame('3.07', BC::sqrt('9.444'));
+    }
+
+    protected function setUp()
+    {
+        BC::setScale(2);
     }
 }

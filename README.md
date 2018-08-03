@@ -32,11 +32,12 @@ Features
     - roundDown
     - roundUp
     - ceil
-    - fmod
+    - fmod (deprected just use mod)
     - exp
     - log
     - fact
-    - pow (now supports fractional)
+    - pow (supports fractional)
+    - mod (supports fractional + scale in php 5.6 <)
 - proxy for original functions (http://php.net/manual/en/book.bc.php)
 - all functions supports scientific notation
 - all functions are static so it can be easy replaced by this lib
