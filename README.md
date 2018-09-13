@@ -23,8 +23,8 @@ Features
     - convertScientificNotationToString - converts scientific notation to string
     - getScale - gets current global scale 
     - getDecimalsLengthFromNumber - gets amount of decimals 
-    - hexdec 
-    - dechex
+    - hexdec - hexadecimal to decimal
+    - dechex - decimal to hexadecimal
 - new math functions 
     - round
     - abs 
