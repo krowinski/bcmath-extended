@@ -1005,6 +1005,55 @@ class BCTest extends TestCase
         self::assertSame('3.07', BC::sqrt('9.444'));
     }
 
+    public function hexdecProvider()
+    {
+        return [
+            ['123', '7b'],
+            ['1234567890', '499602d2'],
+            ['12345678901234567890', 'ab54a98ceb1f0ad2'],
+            ['123456789012345678901234567890', '18ee90ff6c373e0ee4e3f0ad2'],
+            ['1234567890123456789012345678901234567890', '3a0c92075c0dbf3b8acbc5f96ce3f0ad2'],
+        ];
+    }
+
+    /**
+     * @test
+     * @param string $expected
+     * @param string $operand
+     * @dataProvider hexdecProvider
+     */
+    public function shouldHexdec($expected, $operand)
+    {
+        $number = BC::hexdec($operand);
+        self::assertInternalType('string', $number);
+        self::assertSame($expected, $number);
+    }
+
+    public function dechexProvider()
+    {
+        return [
+            ['7b', '123'],
+            ['ffffffff', '4294967295'],
+            ['200000000', '8589934592'],
+            ['7fffffffffffffff', '9223372036854775807'],
+            ['10000000000000000', '18446744073709551616'],
+            ['18ee90ff6c373e0ee4e3f0ad2', '123456789012345678901234567890'],
+        ];
+    }
+
+    /**
+     * @test
+     * @param string $expected
+     * @param string $operand
+     * @dataProvider dechexProvider
+     */
+    public function shouldDechex($expected, $operand)
+    {
+        $number = BC::dechex($operand);
+        self::assertInternalType('string', $number);
+        self::assertSame($expected, $number);
+    }
+
     protected function setUp()
     {
         BC::setScale(2);

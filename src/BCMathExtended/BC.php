@@ -568,4 +568,34 @@ class BC
 
         return $return;
     }
+
+    /**
+     * @param string $hex
+     * @return string
+     */
+    public static function hexdec($hex) {
+        $remainingDigits = substr($hex, 0, -1);
+        $lastDigitToDecimal = \hexdec(substr($hex, -1));
+
+        if (strlen($remainingDigits) === 0) {
+            return $lastDigitToDecimal;
+        }
+
+        return self::add(self::mul(16, self::hexdec($remainingDigits)), $lastDigitToDecimal, 0);
+    }
+
+    /**
+     * @param int $decimal
+     * @return string
+     */
+    public static function dechex($decimal) {
+        $quotient = self::div($decimal, 16, 0);
+        $remainderToHex = \dechex(self::mod($decimal, 16));
+
+        if (self::comp($quotient, 0) === 0) {
+            return $remainderToHex;
+        }
+
+        return self::dechex($quotient) . $remainderToHex;
+    }
 }
