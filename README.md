@@ -34,12 +34,30 @@ Features
     - roundDown
     - roundUp
     - ceil
-    - fmod (deprected just use mod)
     - exp
     - log
     - fact
     - pow (supports fractional)
     - mod (supports fractional + scale in php 5.6 <)
+    - bitwise operators
+        - xor
+        - or
+        - and
 - proxy for original functions (http://php.net/manual/en/book.bc.php)
 - all functions supports scientific notation
 - all functions are static so it can be easy replaced by this lib
+
+Info
+===
+As of 7.2 float can be passed to bcmod but they don't return correct values (IMO)
+
+I created bug for this in https://bugs.php.net/bug.php?id=76287 but it was commented as documentation issue not a bug.
+
+```
+bcmod() doesn't use floor() but rather truncates towards zero,
+which is also defined this way for POSIX fmod(), so that the
+result always has the same sign as the dividend.  Therefore, this
+is not a bug, but rather a documentation issue.
+```
+
+But I still will use floor not truncated for mod in this lib.
