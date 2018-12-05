@@ -40,9 +40,9 @@ Features
     - pow (supports fractional)
     - mod (supports fractional + scale in php 5.6 <)
     - bitwise operators
-        - xor
-        - or
-        - and
+        - bitXor
+        - bitOR
+        - bitAnd
 - proxy for original functions (http://php.net/manual/en/book.bc.php)
 - all functions supports scientific notation
 - all functions are static so it can be easy replaced by this lib
