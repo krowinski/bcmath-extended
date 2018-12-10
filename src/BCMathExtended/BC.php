@@ -664,7 +664,8 @@ class BC
      */
     public static function dec2bin($number, $base = self::MAX_BASE)
     {
-        return self::decBaseHelper($base, function ($base) use ($number) {
+        return self::decBaseHelper(
+            $base, function ($base) use ($number) {
             $value = '';
             if ('0' === $number) {
                 return chr($number);
@@ -677,7 +678,8 @@ class BC
             }
 
             return $value;
-        });
+        }
+        );
     }
 
     /**
@@ -754,23 +756,25 @@ class BC
     }
 
     /**
-     * @param string $value
+     * @param string $binary
      * @param int $base
      * @return string
      */
-    public static function bin2dec($value, $base = self::MAX_BASE)
+    public static function bin2dec($binary, $base = self::MAX_BASE)
     {
-        return self::decBaseHelper($base, function ($base) use ($value) {
-            $size = strlen($value);
+        return self::decBaseHelper(
+            $base, function ($base) use ($binary) {
+            $size = strlen($binary);
             $return = '0';
             for ($i = 0; $i < $size; ++$i) {
-                $element = ord($value[$i]);
+                $element = ord($binary[$i]);
                 $power = BC::pow($base, $size - $i - 1);
                 $return = BC::add($return, BC::mul($element, $power));
             }
 
             return $return;
-        });
+        }
+        );
     }
 
     /**

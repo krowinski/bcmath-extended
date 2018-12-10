@@ -25,6 +25,8 @@ Features
     - getDecimalsLengthFromNumber - gets amount of decimals 
     - hexdec - converting from hexadecimal to decimal
     - dechex - converting from decimal to hexadecimal
+    - bin2dec - converting from binary to decimal
+    - dec2bin - converting from decimal to binary
 - new math functions 
     - round
     - abs 
@@ -41,7 +43,7 @@ Features
     - mod (supports fractional + scale in php 5.6 <)
     - bitwise operators
         - bitXor
-        - bitOR
+        - bitOr
         - bitAnd
 - proxy for original functions (http://php.net/manual/en/book.bc.php)
 - all functions supports scientific notation

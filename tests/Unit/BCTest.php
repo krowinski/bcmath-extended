@@ -1207,6 +1207,33 @@ class BCTest extends TestCase
         BC::bitAnd('1', 0.001);
     }
 
+    /**
+     * @test
+     * @dataProvider shouldConvertBinaryProvider
+     * @param string $expected
+     * @param string $base64binary
+     */
+    public function shouldConvertBinary($expected, $base64binary)
+    {
+        $decoded = base64_decode($base64binary);
+        self::assertSame($expected, BC::bin2dec($decoded));
+        self::assertSame($decoded, BC::dec2bin($expected));
+    }
+
+    /**
+     * @return array
+     */
+    public function shouldConvertBinaryProvider()
+    {
+        return [
+            ['1000000000865464564564564567867867867800000', 'C3q8Ypr74y+H5r28hvnkbmHA'],
+            ['5000788676546456456458678760000000', '9o7TsLbE7mZg8DmCSgA'],
+            ['543543543534543534543534543', 'AcGb0ol63k727vnP'],
+            ['2', 'Ag=='],
+            ['48', 'MA==']
+        ];
+    }
+
     protected function setUp()
     {
         BC::setScale(2);
