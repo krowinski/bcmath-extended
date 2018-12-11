@@ -749,7 +749,6 @@ class BC
                 $number[$i] = chr($byte);
                 break;
             }
-            $number[$i] = chr(0);
         }
 
         return $number;

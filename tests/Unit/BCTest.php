@@ -1234,6 +1234,26 @@ class BCTest extends TestCase
         ];
     }
 
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid Base: 300
+     */
+    public function shouldThrowErrorOnIncorrectBaseInBin2Dec()
+    {
+        BC::bin2dec('', 300);
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid Base: 600
+     */
+    public function shouldThrowErrorOnIncorrectBaseInDec2Bin()
+    {
+        BC::dec2bin(1, 600);
+    }
+
     protected function setUp()
     {
         BC::setScale(2);
