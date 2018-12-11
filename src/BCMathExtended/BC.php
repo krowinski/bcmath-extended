@@ -264,7 +264,7 @@ class BC
             return 'NAN';
         }
         $scale = self::DEFAULT_SCALE;
-        $m = (string)log($arg);
+        $m = (string)log((float)$arg);
         $x = self::sub(self::div($arg, self::exp($m), $scale), '1', $scale);
         $res = '0';
         $pow = '1';
@@ -363,7 +363,7 @@ class BC
             $number = self::convertScientificNotationToString($number);
             if (null === $max) {
                 $max = $number;
-            } elseif (self::comp($max, $number) === self::COMPARE_RIGHT_GRATER) {
+            } elseif (self::comp((string)$max, $number) === self::COMPARE_RIGHT_GRATER) {
                 $max = $number;
             }
         }
@@ -386,7 +386,7 @@ class BC
             $number = self::convertScientificNotationToString($number);
             if (null === $min) {
                 $min = $number;
-            } elseif (self::comp($min, $number) === self::COMPARE_LEFT_GRATER) {
+            } elseif (self::comp((string)$min, $number) === self::COMPARE_LEFT_GRATER) {
                 $min = $number;
             }
         }
@@ -513,7 +513,7 @@ class BC
     /**
      * @param string $leftOperand
      * @param string $modulus
-     * @param null $scale
+     * @param null|int $scale
      * @return string
      */
     public static function mod($leftOperand, $modulus, $scale = null)
@@ -574,13 +574,13 @@ class BC
     }
 
     /**
-     * @param int $decimal
+     * @param string $decimal
      * @return string
      */
     public static function dechex($decimal)
     {
         $quotient = self::div($decimal, 16, 0);
-        $remainderToHex = \dechex(self::mod($decimal, 16));
+        $remainderToHex = \dechex((int)self::mod($decimal, 16));
 
         if (self::comp($quotient, 0) === 0) {
             return $remainderToHex;
@@ -635,6 +635,8 @@ class BC
             $rightOperand = self::recalculateNegative($rightOperand);
         }
 
+        $isNegative = false;
+        $result = '';
         if (self::BIT_OPERATOR_AND === $operator) {
             $result = $leftOperand & $rightOperand;
             $isNegative = ($leftOperandNegative and $rightOperandNegative);
@@ -644,8 +646,6 @@ class BC
         } elseif (self::BIT_OPERATOR_XOR === $operator) {
             $result = $leftOperand ^ $rightOperand;
             $isNegative = ($leftOperandNegative xor $rightOperandNegative);
-        } else {
-            throw new \InvalidArgumentException('Unknown operator');
         }
 
         if ($isNegative) {
@@ -668,7 +668,7 @@ class BC
             $base, function ($base) use ($number) {
             $value = '';
             if ('0' === $number) {
-                return chr($number);
+                return chr((int)$number);
             }
 
             while (BC::comp($number, '0') !== BC::COMPARE_EQUAL) {
