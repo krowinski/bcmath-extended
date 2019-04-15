@@ -55,13 +55,22 @@ class BC
             } else {
                 $number = self::mul($pow, $regs[1], $scale);
             }
-            // remove unnecessary 0 from 0.000 is a 0
-            $number = rtrim($number, '0');
-            // if you remove 0 you must clean dot
-            $number = rtrim($number, '.');
+            // remove unnecessary 0 and dot from 0.000 is a 0
+            $number = self::trimTrailingZeroes($number);
         }
 
         return self::checkNumber($number);
+    }
+
+    /**
+     * @param int|string|float $number
+     * @return void
+     */
+    private static function trimTrailingZeroes($number) {
+        if (false !== strpos($number, '.')) {
+            $number = rtrim($number, '0');
+        }
+        return rtrim($number, '.') ?: '0';
     }
 
     /**
@@ -441,7 +450,7 @@ class BC
      */
     private static function checkIsFloatCleanZeros(&$number)
     {
-        return false !== strpos($number = rtrim(rtrim($number, '0'), '.'), '.');
+        return false !== strpos($number = self::trimTrailingZeroes($number), '.');
     }
 
     /**
