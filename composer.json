@@ -20,12 +20,11 @@
   ],
   "type": "library",
   "require": {
-    "php": ">=5.3",
+    "php": ">=7.1",
     "ext-bcmath": "*"
   },
   "require-dev": {
-    "php": ">=5.4",
-    "phpunit/phpunit": "^4.8|^5.7|^6.5"
+    "phpunit/phpunit": "^7.5"
   },
   "license": "MIT",
   "authors": [
