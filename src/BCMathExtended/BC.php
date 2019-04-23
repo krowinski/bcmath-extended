@@ -273,10 +273,10 @@ class BC
         return self::add($min, self::mul($difference, $randPercent, 8), 0);
     }
 
-    public static function max(/* args... */): ?string
+    public static function max(...$ags): ?string
     {
         $max = null;
-        foreach (self::getArgs(func_get_args()) as $number) {
+        foreach (self::parseArgs($ags) as $number) {
             $number = self::convertScientificNotationToString((string)$number);
             if (null === $max) {
                 $max = $number;
@@ -288,10 +288,10 @@ class BC
         return $max;
     }
 
-    public static function min(/* args... */): ?string
+    public static function min(...$ags): ?string
     {
         $min = null;
-        foreach (self::getArgs(func_get_args()) as $number) {
+        foreach (self::parseArgs($ags) as $number) {
             $number = self::convertScientificNotationToString((string)$number);
             if (null === $min) {
                 $min = $number;
@@ -613,7 +613,7 @@ class BC
         return self::bitOperatorHelper($leftOperand, $rightOperand, self::BIT_OPERATOR_XOR);
     }
 
-    protected static function getArgs(array $args): array
+    protected static function parseArgs(array $args): array
     {
         if (is_array($args[0])) {
             $args = $args[0];
