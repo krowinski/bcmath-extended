@@ -157,7 +157,7 @@ class BC
         $scale = self::DEFAULT_SCALE;
         $result = '1';
         for ($i = 299; $i > 0; $i--) {
-            $result = self::add(self::mul(self::div($result, (string)$i, $scale), $arg, $scale), (string)1, $scale);
+            $result = self::add(self::mul(self::div($result, (string)$i, $scale), $arg, $scale), '1', $scale);
         }
 
         return $result;
@@ -458,8 +458,7 @@ class BC
     (
         string $leftOperand,
         string $rightOperand
-    ): string
-    {
+    ): string {
         return self::bitOperatorHelper($leftOperand, $rightOperand, self::BIT_OPERATOR_AND);
     }
 
