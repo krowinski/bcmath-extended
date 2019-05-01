@@ -1,31 +1,28 @@
 <?php
+declare(strict_types=1);
 
 namespace BCMathExtended;
 
-/**
- * Class BC
- * @package BCMathExtended
- */
+use Closure;
+use InvalidArgumentException;
+use function dechex;
+use function hexdec;
+
 class BC
 {
-    const COMPARE_EQUAL = 0;
-    const COMPARE_LEFT_GRATER = 1;
-    const COMPARE_RIGHT_GRATER = -1;
+    public const COMPARE_EQUAL = 0;
+    public const COMPARE_LEFT_GRATER = 1;
+    public const COMPARE_RIGHT_GRATER = -1;
 
-    const DEFAULT_SCALE = 100;
+    protected const DEFAULT_SCALE = 100;
 
-    const MAX_BASE = 256;
+    protected const MAX_BASE = 256;
 
-    const BIT_OPERATOR_AND = 'and';
-    const BIT_OPERATOR_OR = 'or';
-    const BIT_OPERATOR_XOR = 'xor';
+    protected const BIT_OPERATOR_AND = 'and';
+    protected const BIT_OPERATOR_OR = 'or';
+    protected const BIT_OPERATOR_XOR = 'xor';
 
-    /**
-     * @param int|string $number
-     * @param int $precision
-     * @return string
-     */
-    public static function round($number, $precision = 0)
+    public static function round(string $number, int $precision = 0): string
     {
         $number = self::convertScientificNotationToString($number);
         if (self::checkIsFloat($number)) {
@@ -39,17 +36,13 @@ class BC
         return self::checkNumber($number);
     }
 
-    /**
-     * @param int|string|float $number
-     * @return string
-     */
-    public static function convertScientificNotationToString($number)
+    public static function convertScientificNotationToString(string $number): string
     {
         // check if number is in scientific notation, first use stripos as is faster then preg_match
         if (false !== stripos($number, 'E') && preg_match('/(-?(\d+\.)?\d+)E([+-]?)(\d+)/i', $number, $regs)) {
             // calculate final scale of number
             $scale = $regs[4] + self::getDecimalsLengthFromNumber($regs[1]);
-            $pow = self::pow(10, $regs[4], $scale);
+            $pow = self::pow('10', $regs[4], $scale);
             if ('-' === $regs[3]) {
                 $number = self::div($regs[1], $pow, $scale);
             } else {
@@ -62,22 +55,7 @@ class BC
         return self::checkNumber($number);
     }
 
-    /**
-     * @param int|string|float $number
-     * @return void
-     */
-    private static function trimTrailingZeroes($number) {
-        if (false !== strpos($number, '.')) {
-            $number = rtrim($number, '0');
-        }
-        return rtrim($number, '.') ?: '0';
-    }
-
-    /**
-     * @param int|string|float $number
-     * @return int
-     */
-    public static function getDecimalsLengthFromNumber($number)
+    public static function getDecimalsLengthFromNumber(string $number): int
     {
         $check = explode('.', $number);
         if (!empty($check[1])) {
@@ -87,51 +65,35 @@ class BC
         return 0;
     }
 
-    /**
-     * @param string $leftOperand
-     * @param string $rightOperand
-     * @param null|int $scale
-     * @return string
-     */
-    public static function pow($leftOperand, $rightOperand, $scale = null)
+    public static function pow(string $leftOperand, string $rightOperand, ?int $scale = null): string
     {
         $leftOperand = self::convertScientificNotationToString($leftOperand);
         $rightOperand = self::convertScientificNotationToString($rightOperand);
 
         if (self::checkIsFloat($rightOperand)) {
             if (null === $scale) {
-                return self::powFractional($leftOperand, $rightOperand);
+                $r = self::powFractional($leftOperand, $rightOperand);
+            } else {
+                $r = self::powFractional($leftOperand, $rightOperand, $scale);
             }
-
-            return self::powFractional($leftOperand, $rightOperand, $scale);
+        } else if (null === $scale) {
+            $r = bcpow($leftOperand, $rightOperand);
+        } else {
+            $r = bcpow($leftOperand, $rightOperand, $scale);
         }
 
-        if (null === $scale) {
-            return bcpow($leftOperand, $rightOperand);
-        }
-
-        return bcpow($leftOperand, $rightOperand, $scale);
+        return self::trimTrailingZeroes($r);
     }
 
-    /**
-     * @param int|string $number
-     * @return bool
-     */
-    private static function checkIsFloat($number)
+    protected static function checkIsFloat(string $number): bool
     {
         return false !== strpos($number, '.');
     }
 
-    /**
-     * @param string $leftOperand
-     * @param string $rightOperand
-     * @param null|int $scale
-     * @return string
-     */
-    private static function powFractional($leftOperand, $rightOperand, $scale = null)
+    protected static function powFractional(string $leftOperand, string $rightOperand, ?int $scale = null): string
     {
         // we need to increased scale to get correct results and avoid rounding error
-        $increasedScale = null === $scale ? self::getScale() : $scale;
+        $increasedScale = $scale ?? self::getScale();
         $increasedScale *= 2;
         $decimals = explode('.', $rightOperand);
 
@@ -150,37 +112,40 @@ class BC
         );
     }
 
-    /**
-     * @return int
-     */
-    public static function getScale()
+    public static function getScale(): int
     {
+        if (PHP_VERSION_ID >= 70300) {
+            return bcscale();
+        }
+
         $sqrt = self::sqrt('2');
 
         return strlen(substr($sqrt, strpos($sqrt, '.') + 1));
     }
 
-    /**
-     * @param string $operand
-     * @param null|int $scale
-     * @return string
-     */
-    public static function sqrt($operand, $scale = null)
+    public static function sqrt(string $operand, ?int $scale = null): string
     {
         $operand = self::convertScientificNotationToString($operand);
 
         if (null === $scale) {
-            return bcsqrt($operand);
+            $r = bcsqrt($operand);
+        } else {
+            $r = bcsqrt($operand, $scale);
         }
 
-        return bcsqrt($operand, $scale);
+        return self::trimTrailingZeroes($r);
     }
 
-    /**
-     * @param int|string $number
-     * @return int|string
-     */
-    private static function checkNumber($number)
+    protected static function trimTrailingZeroes(string $number): string
+    {
+        if (false !== strpos($number, '.')) {
+            $number = rtrim($number, '0');
+        }
+
+        return rtrim($number, '.') ?: '0';
+    }
+
+    protected static function checkNumber(string $number): string
     {
         $number = str_replace('+', '', filter_var($number, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION));
         if ('-0' === $number || !is_numeric($number)) {
@@ -190,80 +155,64 @@ class BC
         return $number;
     }
 
-    /**
-     * @param string $leftOperand
-     * @param string $rightOperand
-     * @param null|int $scale
-     * @return string
-     */
-    public static function mul($leftOperand, $rightOperand, $scale = null)
+    public static function mul(string $leftOperand, string $rightOperand, ?int $scale = null): string
     {
         $leftOperand = self::convertScientificNotationToString($leftOperand);
         $rightOperand = self::convertScientificNotationToString($rightOperand);
 
         if (null === $scale) {
-            return bcmul($leftOperand, $rightOperand);
+            $r = bcmul($leftOperand, $rightOperand);
+        } else {
+            $r = bcmul($leftOperand, $rightOperand, $scale);
         }
 
-        return bcmul($leftOperand, $rightOperand, $scale);
+        return self::trimTrailingZeroes($r);
     }
 
-    /**
-     * @param string $arg
-     * @return string
-     */
-    public static function exp($arg)
+    public static function exp(string $arg): string
     {
         $scale = self::DEFAULT_SCALE;
         $result = '1';
         for ($i = 299; $i > 0; $i--) {
-            $result = self::add(self::mul(self::div($result, $i, $scale), $arg, $scale), 1, $scale);
+            $result = self::add(self::mul(self::div($result, (string)$i, $scale), $arg, $scale), '1', $scale);
         }
 
         return $result;
     }
 
-    /**
-     * @param string $leftOperand
-     * @param string $rightOperand
-     * @param null|int $scale
-     * @return string
-     */
-    public static function add($leftOperand, $rightOperand, $scale = null)
+    public static function add(string $leftOperand, string $rightOperand, ?int $scale = null): string
     {
         $leftOperand = self::convertScientificNotationToString($leftOperand);
         $rightOperand = self::convertScientificNotationToString($rightOperand);
 
         if (null === $scale) {
-            return bcadd($leftOperand, $rightOperand);
+            $r = bcadd($leftOperand, $rightOperand);
+        } else {
+            $r = bcadd($leftOperand, $rightOperand, $scale);
         }
 
-        return bcadd($leftOperand, $rightOperand, $scale);
+        return self::trimTrailingZeroes($r);
     }
 
-    /**
-     * @param string $leftOperand
-     * @param string $rightOperand
-     * @param null|int $scale
-     * @return string
-     */
-    public static function div($leftOperand, $rightOperand, $scale = null)
+    public static function div(string $leftOperand, string $rightOperand, ?int $scale = null): string
     {
         $leftOperand = self::convertScientificNotationToString($leftOperand);
         $rightOperand = self::convertScientificNotationToString($rightOperand);
 
-        if (null === $scale) {
-            return bcdiv($leftOperand, $rightOperand);
+        if ('0' === self::trimTrailingZeroes($rightOperand)) {
+            throw new InvalidArgumentException('Division by zero');
         }
 
-        return bcdiv($leftOperand, $rightOperand, $scale);
+        if (null === $scale) {
+            $r = bcdiv($leftOperand, $rightOperand);
+        } else {
+            $r = bcdiv($leftOperand, $rightOperand, $scale);
+        }
+
+        return self::trimTrailingZeroes($r);
     }
 
-    /**
-     * @param string $arg
-     * @return string
-     */
-    public static function log($arg)
+    public static function log(string $arg): string
     {
         $arg = self::convertScientificNotationToString($arg);
         if ($arg === '0') {
@@ -280,7 +229,7 @@ class BC
         $i = 1;
         do {
             $pow = self::mul($pow, $x, $scale);
-            $sum = self::div($pow, $i, $scale);
+            $sum = self::div($pow, (string)$i, $scale);
             if ($i % 2 === 1) {
                 $res = self::add($res, $sum, $scale);
             } else {
@@ -292,13 +241,7 @@ class BC
         return self::add($res, $m, $scale);
     }
 
-    /**
-     * @param string $leftOperand
-     * @param string $rightOperand
-     * @param null|int $scale
-     * @return int
-     */
-    public static function comp($leftOperand, $rightOperand, $scale = null)
+    public static function comp(string $leftOperand, string $rightOperand, ?int $scale = null): int
     {
         $leftOperand = self::convertScientificNotationToString($leftOperand);
         $rightOperand = self::convertScientificNotationToString($rightOperand);
@@ -314,62 +257,41 @@ class BC
         );
     }
 
-    /**
-     * @param string $leftOperand
-     * @param string $rightOperand
-     * @param null|int $scale
-     * @return string
-     */
-    public static function sub($leftOperand, $rightOperand, $scale = null)
+    public static function sub(string $leftOperand, string $rightOperand, ?int $scale = null): string
     {
         $leftOperand = self::convertScientificNotationToString($leftOperand);
         $rightOperand = self::convertScientificNotationToString($rightOperand);
 
         if (null === $scale) {
-            return bcsub($leftOperand, $rightOperand);
+            $r = bcsub($leftOperand, $rightOperand);
+        } else {
+            $r = bcsub($leftOperand, $rightOperand, $scale);
         }
 
-        return bcsub($leftOperand, $rightOperand, $scale);
+        return self::trimTrailingZeroes($r);
     }
 
-    /**
-     * @param $number
-     * @return bool
-     */
-    private static function isNegative($number)
+    protected static function isNegative(string $number): bool
     {
         return 0 === strncmp('-', $number, 1);
     }
 
-    /**
-     * @param int|string $min
-     * @param int|string $max
-     * @return string
-     */
-    public static function rand($min, $max)
+    public static function rand(string $min, string $max): string
     {
         $max = self::convertScientificNotationToString($max);
         $min = self::convertScientificNotationToString($min);
 
-        $difference = self::add(self::sub($max, $min), 1);
-        $randPercent = self::div(mt_rand(), mt_getrandmax(), 8);
+        $difference = self::add(self::sub($max, $min), '1');
+        $randPercent = self::div((string)mt_rand(), (string)mt_getrandmax(), 8);
 
         return self::add($min, self::mul($difference, $randPercent, 8), 0);
     }
 
-    /**
-     * @param array|int|string,...
-     * @return null|string
-     */
-    public static function max()
+    public static function max(...$ags): ?string
     {
         $max = null;
-        $args = func_get_args();
-        if (is_array($args[0])) {
-            $args = $args[0];
-        }
-        foreach ($args as $number) {
-            $number = self::convertScientificNotationToString($number);
+        foreach (self::parseArgs($ags) as $number) {
+            $number = self::convertScientificNotationToString((string)$number);
             if (null === $max) {
                 $max = $number;
             } elseif (self::comp((string)$max, $number) === self::COMPARE_RIGHT_GRATER) {
@@ -380,19 +302,20 @@ class BC
         return $max;
     }
 
-    /**
-     * @param array|int|string,...
-     * @return null|string
-     */
-    public static function min()
+    protected static function parseArgs(array $args): array
     {
-        $min = null;
-        $args = func_get_args();
         if (is_array($args[0])) {
             $args = $args[0];
         }
-        foreach ($args as $number) {
-            $number = self::convertScientificNotationToString($number);
+
+        return $args;
+    }
+
+    public static function min(...$ags): ?string
+    {
+        $min = null;
+        foreach (self::parseArgs($ags) as $number) {
+            $number = self::convertScientificNotationToString((string)$number);
             if (null === $min) {
                 $min = $number;
             } elseif (self::comp((string)$min, $number) === self::COMPARE_LEFT_GRATER) {
@@ -403,15 +326,10 @@ class BC
         return $min;
     }
 
-    /**
-     * @param int|string $number
-     * @param int $precision
-     * @return string
-     */
-    public static function roundDown($number, $precision = 0)
+    public static function roundDown(string $number, int $precision = 0): string
     {
         $number = self::convertScientificNotationToString($number);
-        $multiply = self::pow(10, (string)abs($precision));
+        $multiply = self::pow('10', (string)abs($precision));
 
         return $precision < 0
             ?
@@ -426,11 +344,7 @@ class BC
             );
     }
 
-    /**
-     * @param int|string $number
-     * @return string
-     */
-    public static function floor($number)
+    public static function floor(string $number): string
     {
         $number = self::convertScientificNotationToString($number);
         if (self::checkIsFloat($number) && self::checkIsFloatCleanZeros($number)) {
@@ -438,30 +352,21 @@ class BC
             if (self::isNegative($number)) {
                 --$result;
             }
-            $number = self::add($number, $result, 0);
+            $number = self::add($number, (string)$result, 0);
         }
 
         return self::checkNumber($number);
     }
 
-    /**
-     * @param int|string $number
-     * @return bool
-     */
-    private static function checkIsFloatCleanZeros(&$number)
+    protected static function checkIsFloatCleanZeros(string &$number): bool
     {
         return false !== strpos($number = self::trimTrailingZeroes($number), '.');
     }
 
-    /**
-     * @param int|string $number
-     * @param int $precision
-     * @return string
-     */
-    public static function roundUp($number, $precision = 0)
+    public static function roundUp(string $number, int $precision = 0): string
     {
         $number = self::convertScientificNotationToString($number);
-        $multiply = self::pow(10, (string)abs($precision));
+        $multiply = self::pow('10', (string)abs($precision));
 
         return $precision < 0
             ?
@@ -476,11 +381,7 @@ class BC
             );
     }
 
-    /**
-     * @param int|string $number
-     * @return string
-     */
-    public static function ceil($number)
+    public static function ceil(string $number): string
     {
         $number = self::convertScientificNotationToString($number);
         if (self::checkIsFloat($number) && self::checkIsFloatCleanZeros($number)) {
@@ -488,44 +389,37 @@ class BC
             if (self::isNegative($number)) {
                 --$result;
             }
-            $number = self::add($number, $result, 0);
+            $number = self::add($number, (string)$result, 0);
         }
 
         return self::checkNumber($number);
     }
 
-    /**
-     * @param string $leftOperand
-     * @param string $rightOperand
-     * @param string $modulus
-     * @param null|int $scale
-     * @return string
-     */
-    public static function powMod($leftOperand, $rightOperand, $modulus, $scale = null)
-    {
+    public static function powMod(
+        string $leftOperand,
+        string $rightOperand,
+        string $modulus,
+        ?int $scale = null
+    ): string {
         $leftOperand = self::convertScientificNotationToString($leftOperand);
         $rightOperand = self::convertScientificNotationToString($rightOperand);
 
         // bcpowmod in 5.6 have don't calculate correct results if scale is empty
         if (null === $scale) {
-            return self::mod(self::pow($leftOperand, $rightOperand), $modulus);
+            $r = self::mod(self::pow($leftOperand, $rightOperand), $modulus);
+        } else if (self::checkIsFloat($leftOperand) || self::checkIsFloat($rightOperand) || self::checkIsFloat(
+                $modulus
+            )) {
+            // cant use bcpowmod here as it don't support floats
+            $r = self::mod(self::pow($leftOperand, $rightOperand, $scale), $modulus, $scale);
+        } else {
+            $r = bcpowmod($leftOperand, $rightOperand, $modulus, $scale);
         }
 
-        // cant use bcpowmod here as it don't support floats
-        if (self::checkIsFloat($leftOperand) || self::checkIsFloat($rightOperand) || self::checkIsFloat($modulus)) {
-            return self::mod(self::pow($leftOperand, $rightOperand, $scale), $modulus, $scale);
-        }
-
-        return bcpowmod($leftOperand, $rightOperand, $modulus, $scale);
+        return self::trimTrailingZeroes($r);
     }
 
-    /**
-     * @param string $leftOperand
-     * @param string $modulus
-     * @param null|int $scale
-     * @return string
-     */
-    public static function mod($leftOperand, $modulus, $scale = null)
+    public static function mod(string $leftOperand, string $modulus, ?int $scale = null): string
     {
         $leftOperand = self::convertScientificNotationToString($leftOperand);
 
@@ -534,96 +428,81 @@ class BC
         // bcmod in php 5.6< don't support scale and floats
         // let use this $x - floor($x/$y) * $y;
         if (null === $scale) {
-            return self::sub($leftOperand, self::mul(self::floor(self::div($leftOperand, $modulus)), $modulus));
+            $r = self::sub(
+                $leftOperand,
+                self::mul(self::floor(self::div($leftOperand, $modulus)), $modulus)
+            );
+        } else {
+            $r = self::sub(
+                $leftOperand,
+                self::mul(self::floor(self::div($leftOperand, $modulus, $scale)), $modulus, $scale),
+                $scale
+            );
         }
 
-        return self::sub(
-            $leftOperand, self::mul(self::floor(self::div($leftOperand, $modulus, $scale)), $modulus, $scale), $scale
-        );
+        return self::trimTrailingZeroes($r);
     }
 
-    /**
-     * @param string $arg
-     * @return string
-     * @throws \InvalidArgumentException
-     */
-    public static function fact($arg)
+    public static function fact(string $arg): string
     {
         $arg = self::convertScientificNotationToString($arg);
 
         if (self::checkIsFloat($arg)) {
-            throw new \InvalidArgumentException('Number has to be an integer');
+            throw new InvalidArgumentException('Number has to be an integer');
         }
         if (self::isNegative($arg)) {
-            throw new \InvalidArgumentException('Number has to be greater than or equal to 0');
+            throw new InvalidArgumentException('Number has to be greater than or equal to 0');
         }
 
         $return = '1';
         for ($i = 2; $i <= $arg; ++$i) {
-            $return = self::mul($return, $i);
+            $return = self::mul($return, (string)$i);
         }
 
         return $return;
     }
 
-    /**
-     * @param string $hex
-     * @return string
-     */
-    public static function hexdec($hex)
+    public static function hexdec(string $hex): string
     {
         $remainingDigits = substr($hex, 0, -1);
-        $lastDigitToDecimal = \hexdec(substr($hex, -1));
+        $lastDigitToDecimal = (string)hexdec(substr($hex, -1));
 
         if ('' === $remainingDigits) {
             return $lastDigitToDecimal;
         }
 
-        return self::add(self::mul(16, self::hexdec($remainingDigits)), $lastDigitToDecimal, 0);
+        return self::add(self::mul('16', self::hexdec($remainingDigits)), $lastDigitToDecimal, 0);
     }
 
-    /**
-     * @param string $decimal
-     * @return string
-     */
-    public static function dechex($decimal)
+    public static function dechex(string $decimal): string
     {
-        $quotient = self::div($decimal, 16, 0);
-        $remainderToHex = \dechex((int)self::mod($decimal, 16));
+        $quotient = self::div($decimal, '16', 0);
+        $remainderToHex = dechex((int)self::mod($decimal, '16'));
 
-        if (self::comp($quotient, 0) === 0) {
+        if (self::comp($quotient, '0') === self::COMPARE_EQUAL) {
             return $remainderToHex;
         }
 
         return self::dechex($quotient) . $remainderToHex;
     }
 
-    /**
-     * @param string $leftOperand
-     * @param string $rightOperand
-     * @return string
-     */
-    public static function bitAnd($leftOperand, $rightOperand)
-    {
+    public static function bitAnd(
+        string $leftOperand,
+        string $rightOperand
+    ): string {
         return self::bitOperatorHelper($leftOperand, $rightOperand, self::BIT_OPERATOR_AND);
     }
 
-    /**
-     * @param string $leftOperand
-     * @param string $rightOperand
-     * @param string $operator
-     * @return string
-     */
-    private static function bitOperatorHelper($leftOperand, $rightOperand, $operator)
+    protected static function bitOperatorHelper(string $leftOperand, string $rightOperand, string $operator): string
     {
         $leftOperand = self::convertScientificNotationToString($leftOperand);
         $rightOperand = self::convertScientificNotationToString($rightOperand);
 
         if (self::checkIsFloat($leftOperand)) {
-            throw new \InvalidArgumentException('Left operator has to be an integer');
+            throw new InvalidArgumentException('Left operator has to be an integer');
         }
         if (self::checkIsFloat($rightOperand)) {
-            throw new \InvalidArgumentException('Right operator has to be an integer');
+            throw new InvalidArgumentException('Right operator has to be an integer');
         }
 
         $leftOperandNegative = self::isNegative($leftOperand);
@@ -666,23 +545,18 @@ class BC
         return $isNegative ? '-' . $result : $result;
     }
 
-    /**
-     * @param string $number
-     * @param int $base
-     * @return string
-     */
-    public static function dec2bin($number, $base = self::MAX_BASE)
+    public static function dec2bin(string $number, int $base = self::MAX_BASE): string
     {
         return self::decBaseHelper(
-            $base, function ($base) use ($number) {
+            $base, static function (int $base) use ($number) {
             $value = '';
             if ('0' === $number) {
                 return chr((int)$number);
             }
 
             while (BC::comp($number, '0') !== BC::COMPARE_EQUAL) {
-                $rest = BC::mod($number, $base);
-                $number = BC::div($number, $base);
+                $rest = BC::mod($number, (string)$base);
+                $number = BC::div($number, (string)$base);
                 $value = chr((int)$rest) . $value;
             }
 
@@ -691,15 +565,10 @@ class BC
         );
     }
 
-    /**
-     * @param int $base
-     * @param \Closure $closure
-     * @return string
-     */
-    private static function decBaseHelper($base, \Closure $closure)
+    protected static function decBaseHelper(int $base, Closure $closure): string
     {
         if ($base < 2 || $base > self::MAX_BASE) {
-            throw new \InvalidArgumentException('Invalid Base: ' . $base);
+            throw new InvalidArgumentException('Invalid Base: ' . $base);
         }
         $orgScale = self::getScale();
         self::setScale(0);
@@ -711,19 +580,12 @@ class BC
         return $value;
     }
 
-    /**
-     * @param null|int $scale
-     */
-    public static function setScale($scale)
+    public static function setScale(int $scale): void
     {
         bcscale($scale);
     }
 
-    /**
-     * @param int|string $number
-     * @return string
-     */
-    public static function abs($number)
+    public static function abs(string $number): string
     {
         $number = self::convertScientificNotationToString($number);
 
@@ -734,23 +596,14 @@ class BC
         return self::checkNumber($number);
     }
 
-    /**
-     * @param string $string
-     * @param int $length
-     * @return string
-     */
-    private static function alignBinLength($string, $length)
+    protected static function alignBinLength(string $string, int $length): string
     {
         return str_pad($string, $length, self::dec2bin('0'), STR_PAD_LEFT);
     }
 
-    /**
-     * @param string $number
-     * @return string
-     */
-    private static function recalculateNegative($number)
+    protected static function recalculateNegative(string $number): string
     {
-        $xor = str_repeat(self::dec2bin(self::MAX_BASE - 1), strlen($number));
+        $xor = str_repeat(self::dec2bin((string)(self::MAX_BASE - 1)), strlen($number));
         $number ^= $xor;
         for ($i = strlen($number) - 1; $i >= 0; $i--) {
             $byte = ord($number[$i]);
@@ -763,21 +616,16 @@ class BC
         return $number;
     }
 
-    /**
-     * @param string $binary
-     * @param int $base
-     * @return string
-     */
-    public static function bin2dec($binary, $base = self::MAX_BASE)
+    public static function bin2dec(string $binary, int $base = self::MAX_BASE): string
     {
         return self::decBaseHelper(
-            $base, function ($base) use ($binary) {
+            $base, static function (int $base) use ($binary) {
             $size = strlen($binary);
             $return = '0';
             for ($i = 0; $i < $size; ++$i) {
                 $element = ord($binary[$i]);
-                $power = BC::pow($base, $size - $i - 1);
-                $return = BC::add($return, BC::mul($element, $power));
+                $power = BC::pow((string)$base, (string)($size - $i - 1));
+                $return = BC::add($return, BC::mul((string)$element, $power));
             }
 
             return $return;
@@ -785,22 +633,12 @@ class BC
         );
     }
 
-    /**
-     * @param string $leftOperand
-     * @param string $rightOperand
-     * @return string
-     */
-    public static function bitOr($leftOperand, $rightOperand)
+    public static function bitOr(string $leftOperand, string $rightOperand): string
     {
         return self::bitOperatorHelper($leftOperand, $rightOperand, self::BIT_OPERATOR_OR);
     }
 
-    /**
-     * @param string $leftOperand
-     * @param string $rightOperand
-     * @return string
-     */
-    public static function bitXor($leftOperand, $rightOperand)
+    public static function bitXor(string $leftOperand, string $rightOperand): string
     {
         return self::bitOperatorHelper($leftOperand, $rightOperand, self::BIT_OPERATOR_XOR);
     }
