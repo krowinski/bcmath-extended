@@ -284,6 +284,47 @@ class BCTest extends TestCase
         self::assertSame($expected, BC::round((string)$number, $precision));
     }
 
+    public function roundHalfEvenProvider(): array
+    {
+        return [
+            ['2', '1.8'],
+            ['2', '1.5'],
+            ['1', '1.2'],
+            ['1', '0.8'],
+            ['0', '0.5'],
+            ['0', '0.2'],
+            ['-0', '-0.2'],
+            ['0', '-0.5'],
+            ['-1', '-0.8'],
+            ['-1', '-1.2'],
+            ['-2', '-1.5'],
+            ['-2', '-1.8'],
+            ['-2.35', '-2.35', 2],
+            ['-2.4', '-2.35', 1],
+            ['2.4', '2.35', 1],
+            ['0', '0.005', 2],
+            ['0.02', '0.015', 2],
+            ['0.02', '0.025', 2],
+            ['0.04', '0.035', 2],
+            ['0.04', '0.045', 2],
+            ['0.06', '0.055', 2],
+            ['0.06', '0.065', 2],
+            ['0.08', '0.075', 2],
+            ['0.08', '0.085', 2],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider roundHalfEvenProvider
+     * @param string $expected
+     * @param int|float|string $number
+     * @param int $precision
+     */
+    public function shouldRoundHalfEven($expected, $number, $precision = 0): void
+    {
+        self::assertSame($expected, BC::roundHalfEven((string)$number, $precision));
+    }
 
     public function randProvider(): array
     {

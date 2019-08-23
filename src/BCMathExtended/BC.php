@@ -642,4 +642,33 @@ class BC
     {
         return self::bitOperatorHelper($leftOperand, $rightOperand, self::BIT_OPERATOR_XOR);
     }
+
+    public static function roundHalfEven(string $number, int $precision = 0): string
+    {
+        $number = self::convertScientificNotationToString($number);
+        if (! self::checkIsFloat($number)) {
+            return self::checkNumber($number);
+        }
+
+        $precessionPos = strpos($number, '.') + $precision + 1;
+        if (strlen($number) <= $precessionPos) {
+            return self::round($number, $precision);
+        }
+
+        if ($number[$precessionPos] !== '5') {
+            return self::round($number, $precision);
+        }
+
+        $isPrevEven = $number[$precessionPos - 1] === '.'
+            ? (int)$number[$precessionPos - 2] % 2 === 0
+            : (int)$number[$precessionPos - 1] % 2 === 0
+        ;
+        $isNegative = self::isNegative($number);
+
+        if ($isPrevEven === $isNegative) {
+            return self::roundUp($number, $precision);
+        }
+
+        return self::roundDown($number, $precision);
+    }
 }
