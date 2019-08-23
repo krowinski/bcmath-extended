@@ -318,12 +318,12 @@ class BCTest extends TestCase
      * @test
      * @dataProvider roundHalfEvenProvider
      * @param string $expected
-     * @param int|float|string $number
+     * @param string $number
      * @param int $precision
      */
-    public function shouldRoundHalfEven($expected, $number, $precision = 0): void
+    public function shouldRoundHalfEven(string $expected, string $number, int $precision = 0): void
     {
-        self::assertSame($expected, BC::roundHalfEven((string)$number, $precision));
+        self::assertSame($expected, BC::roundHalfEven($number, $precision));
     }
 
     public function randProvider(): array
