@@ -93,23 +93,11 @@ class BC
     protected static function powFractional(string $leftOperand, string $rightOperand, ?int $scale = null): string
     {
         // we need to increased scale to get correct results and avoid rounding error
-        $increasedScale = $scale ?? self::getScale();
-        $increasedScale *= 2;
-        $decimals = explode('.', $rightOperand);
+        $currentScale = $scale ?? self::getScale();
+        $increasedScale = $currentScale * 2;
 
-        return self::checkNumber(
-            self::mul(
-                self::exp(
-                    self::mul(
-                        self::log($leftOperand),
-                        '0.' . $decimals[1],
-                        $increasedScale
-                    )
-                ),
-                self::pow($leftOperand, $decimals[0], $increasedScale),
-                $scale
-            )
-        );
+        // add zero to trim scale
+        return self::checkNumber(self::add(self::exp(self::mul($rightOperand, self::log($leftOperand), $increasedScale)), '0', $currentScale));
     }
 
     public static function getScale(): int
