@@ -35,6 +35,7 @@ Features
     - min
     - roundDown
     - roundUp
+    - roundHalfEven
     - ceil
     - exp
     - log
