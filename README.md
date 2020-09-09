@@ -18,7 +18,8 @@ composer require krowinski/bcmath-extended
 
 Features
 ===
-
+- config
+    - setTrimTrailingZeroes - disable|enable trailing zeros (default trimming is enabled)  
 - new tool methods
     - convertScientificNotationToString - converts scientific notation to string
     - getScale - gets current global scale 
