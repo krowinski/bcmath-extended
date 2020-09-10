@@ -47,7 +47,7 @@ class BC
                 $number = static::mul($pow, $regs[1], $scale);
             }
             // remove unnecessary 0 and dot from 0.000 is a 0
-            $number = static::trimTrailingZeroes($number);
+            $number = static::formatTrailingZeroes($number, $scale);
         }
 
         return static::checkNumber($number);
@@ -80,7 +80,7 @@ class BC
             $r = bcpow($leftOperand, $rightOperand, $scale);
         }
 
-        return static::trimTrailingZeroes($r);
+        return static::formatTrailingZeroes($r, $scale);
     }
 
     protected static function checkIsFloat(string $number): bool
@@ -127,20 +127,49 @@ class BC
             $r = bcsqrt($operand, $scale);
         }
 
-        return static::trimTrailingZeroes($r);
+        return static::formatTrailingZeroes($r, $scale);
+    }
+
+    protected static function formatTrailingZeroes(string $number, ?int $scale = null): string
+    {
+        if (self::$trimTrailingZeroes) {
+            return static::trimTrailingZeroes($number);
+        }
+
+        // newer version of php correct add trailing zeros
+        if (PHP_VERSION_ID >= 70300) {
+            return $number;
+        }
+
+        // old one not so much..
+        return self::addTrailingZeroes($number, $scale);
     }
 
     protected static function trimTrailingZeroes(string $number): string
     {
-        if (!self::$trimTrailingZeroes) {
-            return $number;
-        }
-
         if (false !== strpos($number, '.')) {
             $number = rtrim($number, '0');
         }
 
         return rtrim($number, '.') ?: '0';
+    }
+
+    protected static function addTrailingZeroes(string $number, ?int $scale): string
+    {
+        if (null === $scale) {
+            return $number;
+        }
+
+        $decimalLength = static::getDecimalsLengthFromNumber($number);
+        if ($scale === $decimalLength) {
+            return $number;
+        }
+
+        if (0 === $decimalLength) {
+            $number .= '.';
+        }
+
+        return str_pad($number, strlen($number) + ($scale - $decimalLength), '0', STR_PAD_RIGHT);
     }
 
     protected static function checkNumber(string $number): string
@@ -164,14 +193,14 @@ class BC
             $r = bcadd($leftOperand, $rightOperand, $scale);
         }
 
-        return static::trimTrailingZeroes($r);
+        return static::formatTrailingZeroes($r, $scale);
     }
 
     public static function exp(string $arg): string
     {
         $scale = static::DEFAULT_SCALE;
         $result = '1';
-        for ($i = 299; $i > 0; $i--) {
+        for ($i = 299; $i > 0; --$i) {
             $result = static::add(static::mul(static::div($result, (string)$i, $scale), $arg, $scale), '1', $scale);
         }
 
@@ -189,7 +218,7 @@ class BC
             $r = bcmul($leftOperand, $rightOperand, $scale);
         }
 
-        return static::trimTrailingZeroes($r);
+        return static::formatTrailingZeroes($r, $scale);
     }
 
     public static function div(string $leftOperand, string $rightOperand, ?int $scale = null): string
@@ -207,7 +236,7 @@ class BC
             $r = bcdiv($leftOperand, $rightOperand, $scale);
         }
 
-        return static::trimTrailingZeroes($r);
+        return static::formatTrailingZeroes($r, $scale);
     }
 
     public static function log(string $arg): string
@@ -233,7 +262,7 @@ class BC
             } else {
                 $res = static::sub($res, $sum, $scale);
             }
-            $i++;
+            ++$i;
         } while (static::comp($sum, '0', $scale));
 
         return static::add($res, $m, $scale);
@@ -266,7 +295,7 @@ class BC
             $r = bcsub($leftOperand, $rightOperand, $scale);
         }
 
-        return static::trimTrailingZeroes($r);
+        return static::formatTrailingZeroes($r, $scale);
     }
 
     public static function setTrimTrailingZeroes(bool $flag): void
@@ -334,7 +363,7 @@ class BC
             $r = bcpowmod($leftOperand, $rightOperand, $modulus, $scale);
         }
 
-        return static::trimTrailingZeroes($r);
+        return static::formatTrailingZeroes($r, $scale);
     }
 
     public static function mod(string $leftOperand, string $modulus, ?int $scale = null): string
@@ -358,7 +387,7 @@ class BC
             );
         }
 
-        return static::trimTrailingZeroes($r);
+        return static::formatTrailingZeroes($r, $scale);
     }
 
     public static function floor(string $number): string
@@ -548,7 +577,7 @@ class BC
     {
         $xor = str_repeat(static::dec2bin((string)(static::MAX_BASE - 1)), strlen($number));
         $number ^= $xor;
-        for ($i = strlen($number) - 1; $i >= 0; $i--) {
+        for ($i = strlen($number) - 1; $i >= 0; --$i) {
             $byte = ord($number[$i]);
             if (++$byte !== static::MAX_BASE) {
                 $number[$i] = chr($byte);
