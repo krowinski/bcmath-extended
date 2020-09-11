@@ -846,6 +846,7 @@ class BCTest extends TestCase
     {
         return [
             ['4', '5', '2', '7', 0],
+            ['4', '5', '2', '7', null],
             ['-4', '-2', '5', '7', 0],
             ['790', '10', '2147483648', '2047', 0],
             ['790', '1E+1', '2E+8', '2047', 0],
@@ -854,7 +855,7 @@ class BCTest extends TestCase
             ['3.7', '5', '2', '7.1', 2],
             ['1', '4', '4', '3', 2],
             ['0.52', '5.1', '2.2', '7.1', 2],
-            ['0.52', '5.1', '2.2', '7.1', 2],
+            ['0.52', '5.1', '2.2', '7.1', null],
         ];
     }
 
@@ -1031,6 +1032,26 @@ class BCTest extends TestCase
         $this->expectExceptionMessage('Left operator has to be an integer');
         $this->expectException(InvalidArgumentException::class);
         BC::bitXor('0.001', '1');
+    }
+
+    /**
+     * @test
+     */
+    public function shouldThrowErrorOnNegativeModPowExponent(): void
+    {
+        $this->expectExceptionMessage('Exponent can\'t be negative');
+        $this->expectException(InvalidArgumentException::class);
+        BC::powMod('10000.123', '-1', '2');
+    }
+
+    /**
+     * @test
+     */
+    public function shouldThrowErrorOnZeroModPowModulus(): void
+    {
+        $this->expectExceptionMessage('Exponent can\'t be negative');
+        $this->expectException(InvalidArgumentException::class);
+        BC::powMod('10000.123', '-1', '2');
     }
 
     /**
