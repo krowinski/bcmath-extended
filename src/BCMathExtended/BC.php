@@ -667,7 +667,7 @@ class BC
             static::mul(
                 static::ceil(static::div($number, $multiply, static::getDecimalsLength($number))),
                 $multiply,
-                abs($precision)
+                (int)abs($precision)
             )
             :
             static::div(
@@ -701,7 +701,7 @@ class BC
             static::mul(
                 static::floor(static::div($number, $multiply, static::getDecimalsLength($number))),
                 $multiply,
-                abs($precision)
+                (int)abs($precision)
             )
             :
             static::div(
