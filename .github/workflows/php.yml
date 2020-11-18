@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
-        matrix:
-          php: [ '7.1', '7.2', '7.3', '7.4', '8.0' ]
+      matrix:
+        php: [ '7.1', '7.2', '7.3', '7.4', '8.0' ]
 
     steps:
       - uses: actions/checkout@v2
@@ -33,12 +33,12 @@ jobs:
         with:
           path: vendor
           key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-php-
+          restore-keys: |
+            ${{ runner.os }}-php-
 
-    - name: Install dependencies
-      if: steps.composer-cache.outputs.cache-hit != 'true'
-      run: composer install --prefer-dist --no-progress --no-suggest
+      - name: Install dependencies
+        if: steps.composer-cache.outputs.cache-hit != 'true'
+        run: composer install --prefer-dist --no-progress --no-suggest
 
-    - name: Run tests
-      run: vendor/bin/phpunit --coverage-text
+      - name: Run tests
+        run: vendor/bin/phpunit --coverage-text
