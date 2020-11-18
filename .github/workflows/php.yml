@@ -1,11 +1,5 @@
-name: PHP Composer
-
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
-
+name: PHP Tests
+on: [push, pull_request]
 jobs:
   build:
 
