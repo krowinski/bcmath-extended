@@ -22,6 +22,9 @@ class BC
     protected const BIT_OPERATOR_OR = 'or';
     protected const BIT_OPERATOR_XOR = 'xor';
 
+    /**
+     * @var bool
+     */
     protected static $trimTrailingZeroes = true;
 
     public static function rand(string $min, string $max): string
@@ -35,8 +38,12 @@ class BC
         return static::add($min, static::mul($difference, $randPercent, 8), 0);
     }
 
-    public static function convertScientificNotationToString(string $number): string
+    public static function convertScientificNotationToString(?string $number): string
     {
+        if (null === $number) {
+            return '0';
+        }
+
         // check if number is in scientific notation, first use stripos as is faster then preg_match
         if (false !== stripos($number, 'E') && preg_match('/(-?(\d+\.)?\d+)E([+-]?)(\d+)/i', $number, $regs)) {
             // calculate final scale of number
@@ -53,9 +60,9 @@ class BC
         return static::parseNumber($number);
     }
 
-    public static function getDecimalsLength(string $number): int
+    public static function getDecimalsLength(?string $number): int
     {
-        if (static::isFloat($number)) {
+        if (null !== $number && static::isFloat($number)) {
             return strcspn(strrev($number), '.');
         }
 
@@ -67,7 +74,7 @@ class BC
         return false !== strpos($number, '.');
     }
 
-    public static function pow(string $base, string $exponent, ?int $scale = null): string
+    public static function pow(?string $base, ?string $exponent, ?int $scale = null): string
     {
         $base = static::convertScientificNotationToString($base);
         $exponent = static::convertScientificNotationToString($exponent);
@@ -112,7 +119,7 @@ class BC
         return strlen(substr($sqrt, strpos($sqrt, '.') + 1));
     }
 
-    public static function sqrt(string $number, ?int $scale = null): string
+    public static function sqrt(?string $number, ?int $scale = null): string
     {
         $number = static::convertScientificNotationToString($number);
 
@@ -125,8 +132,12 @@ class BC
         return static::formatTrailingZeroes($r, $scale);
     }
 
-    protected static function formatTrailingZeroes(string $number, ?int $scale = null): string
+    protected static function formatTrailingZeroes(?string $number, ?int $scale = null): string
     {
+        if (null === $number) {
+            return '0';
+        }
+
         if (self::$trimTrailingZeroes) {
             return static::trimTrailingZeroes($number);
         }
@@ -140,8 +151,12 @@ class BC
         return self::addTrailingZeroes($number, $scale);
     }
 
-    protected static function trimTrailingZeroes(string $number): string
+    protected static function trimTrailingZeroes(?string $number): string
     {
+        if (null === $number) {
+            return '0';
+        }
+
         if (static::isFloat($number)) {
             $number = rtrim($number, '0');
         }
@@ -169,7 +184,7 @@ class BC
 
     protected static function parseNumber(string $number): string
     {
-        $number = str_replace('+', '', filter_var($number, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION));
+        $number = str_replace('+', '', (string) filter_var($number, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION));
         if ('-0' === $number || !is_numeric($number)) {
             return '0';
         }
@@ -177,7 +192,7 @@ class BC
         return $number;
     }
 
-    public static function add(string $leftOperand, string $rightOperand, ?int $scale = null): string
+    public static function add(?string $leftOperand, ?string $rightOperand, ?int $scale = null): string
     {
         $leftOperand = static::convertScientificNotationToString($leftOperand);
         $rightOperand = static::convertScientificNotationToString($rightOperand);
@@ -191,7 +206,7 @@ class BC
         return static::formatTrailingZeroes($r, $scale);
     }
 
-    public static function exp(string $number): string
+    public static function exp(?string $number): string
     {
         $scale = static::DEFAULT_SCALE;
         $result = '1';
@@ -202,7 +217,7 @@ class BC
         return $result;
     }
 
-    public static function mul(string $leftOperand, string $rightOperand, ?int $scale = null): string
+    public static function mul(?string $leftOperand, ?string $rightOperand, ?int $scale = null): string
     {
         $leftOperand = static::convertScientificNotationToString($leftOperand);
         $rightOperand = static::convertScientificNotationToString($rightOperand);
@@ -216,7 +231,7 @@ class BC
         return static::formatTrailingZeroes($r, $scale);
     }
 
-    public static function div(string $dividend, string $divisor, ?int $scale = null): string
+    public static function div(?string $dividend, ?string $divisor, ?int $scale = null): string
     {
         $dividend = static::convertScientificNotationToString($dividend);
         $divisor = static::convertScientificNotationToString($divisor);
@@ -238,7 +253,7 @@ class BC
         return static::formatTrailingZeroes($r, $scale);
     }
 
-    public static function log(string $number): string
+    public static function log(?string $number): string
     {
         $number = static::convertScientificNotationToString($number);
         if ($number === '0') {
@@ -267,7 +282,7 @@ class BC
         return static::add($res, $m, $scale);
     }
 
-    public static function comp(string $leftOperand, string $rightOperand, ?int $scale = null): int
+    public static function comp(?string $leftOperand, ?string $rightOperand, ?int $scale = null): int
     {
         $leftOperand = static::convertScientificNotationToString($leftOperand);
         $rightOperand = static::convertScientificNotationToString($rightOperand);
@@ -283,7 +298,7 @@ class BC
         );
     }
 
-    public static function sub(string $leftOperand, string $rightOperand, ?int $scale = null): string
+    public static function sub(?string $leftOperand, ?string $rightOperand, ?int $scale = null): string
     {
         $leftOperand = static::convertScientificNotationToString($leftOperand);
         $rightOperand = static::convertScientificNotationToString($rightOperand);
@@ -302,6 +317,9 @@ class BC
         self::$trimTrailingZeroes = $flag;
     }
 
+    /**
+     * @param array<int, string|float|int|null>|string|float|int|null ...$values
+     */
     public static function max(...$values): ?string
     {
         $max = null;
@@ -326,6 +344,9 @@ class BC
         return $values;
     }
 
+    /**
+     * @param array<int, string|float|int|null>|string|float|int|null ...$values
+     */
     public static function min(...$values): ?string
     {
         $min = null;
@@ -342,9 +363,9 @@ class BC
     }
 
     public static function powMod(
-        string $base,
-        string $exponent,
-        string $modulus,
+        ?string $base,
+        ?string $exponent,
+        ?string $modulus,
         ?int $scale = null
     ): string {
         $base = static::convertScientificNotationToString($base);
@@ -357,6 +378,7 @@ class BC
         if ('0' === static::trimTrailingZeroes($modulus)) {
             throw new InvalidArgumentException('Modulus can\'t be zero');
         }
+        /** @var string $modulus */
 
         // bcpowmod don't support floats
         if (
@@ -370,9 +392,10 @@ class BC
         } else {
             $r = bcpowmod($base, $exponent, $modulus, $scale);
         }
+        /** @var string|null|false $r */
 
-        if (null === $r) {
-            throw new UnexpectedValueException('bcpowmod should not return null!');
+        if (null === $r || false === $r) {
+            throw new UnexpectedValueException('bcpowmod should not return null|false!');
         }
 
         return static::formatTrailingZeroes($r, $scale);
@@ -383,7 +406,7 @@ class BC
         return 0 === strncmp('-', $number, 1);
     }
 
-    public static function mod(string $dividend, string $divisor, ?int $scale = null): string
+    public static function mod(?string $dividend, ?string $divisor, ?int $scale = null): string
     {
         $dividend = static::convertScientificNotationToString($dividend);
 
@@ -399,7 +422,7 @@ class BC
         );
     }
 
-    public static function floor(string $number): string
+    public static function floor(?string $number): string
     {
         $number = static::trimTrailingZeroes(static::convertScientificNotationToString($number));
         if (static::isFloat($number)) {
@@ -413,7 +436,7 @@ class BC
         return static::parseNumber($number);
     }
 
-    public static function fact(string $number): string
+    public static function fact(?string $number): string
     {
         $number = static::convertScientificNotationToString($number);
 
@@ -432,9 +455,10 @@ class BC
         return $return;
     }
 
-    public static function hexdec(string $hex): string
+    public static function hexdec(?string $hex): string
     {
-        $remainingDigits = substr($hex, 0, -1);
+        $hex = (string) $hex;
+        $remainingDigits = (string) substr($hex, 0, -1);
         $lastDigitToDecimal = (string)hexdec(substr($hex, -1));
 
         if ('' === $remainingDigits) {
@@ -444,7 +468,7 @@ class BC
         return static::add(static::mul('16', static::hexdec($remainingDigits)), $lastDigitToDecimal, 0);
     }
 
-    public static function dechex(string $decimal): string
+    public static function dechex(?string $decimal): string
     {
         $quotient = static::div($decimal, '16', 0);
         $remainderToHex = dechex((int)static::mod($decimal, '16'));
@@ -457,13 +481,13 @@ class BC
     }
 
     public static function bitAnd(
-        string $leftOperand,
-        string $rightOperand
+        ?string $leftOperand,
+        ?string $rightOperand
     ): string {
         return static::bitOperatorHelper($leftOperand, $rightOperand, static::BIT_OPERATOR_AND);
     }
 
-    protected static function bitOperatorHelper(string $leftOperand, string $rightOperand, string $operator): string
+    protected static function bitOperatorHelper(?string $leftOperand, ?string $rightOperand, string $operator): string
     {
         $leftOperand = static::convertScientificNotationToString($leftOperand);
         $rightOperand = static::convertScientificNotationToString($rightOperand);
@@ -551,12 +575,12 @@ class BC
         return $value;
     }
 
-    public static function setScale(int $scale): void
+    public static function setScale(?int $scale): void
     {
-        bcscale($scale);
+        bcscale((int) $scale);
     }
 
-    public static function abs(string $number): string
+    public static function abs(?string $number): string
     {
         $number = static::convertScientificNotationToString($number);
 
@@ -605,17 +629,17 @@ class BC
         );
     }
 
-    public static function bitOr(string $leftOperand, string $rightOperand): string
+    public static function bitOr(?string $leftOperand, ?string $rightOperand): string
     {
         return static::bitOperatorHelper($leftOperand, $rightOperand, static::BIT_OPERATOR_OR);
     }
 
-    public static function bitXor(string $leftOperand, string $rightOperand): string
+    public static function bitXor(?string $leftOperand, ?string $rightOperand): string
     {
         return static::bitOperatorHelper($leftOperand, $rightOperand, static::BIT_OPERATOR_XOR);
     }
 
-    public static function roundHalfEven(string $number, int $precision = 0): string
+    public static function roundHalfEven(?string $number, int $precision = 0): string
     {
         $number = static::convertScientificNotationToString($number);
         if (!static::isFloat($number)) {
@@ -643,7 +667,7 @@ class BC
         return static::roundDown($number, $precision);
     }
 
-    public static function round(string $number, int $precision = 0): string
+    public static function round(?string $number, int $precision = 0): string
     {
         $number = static::convertScientificNotationToString($number);
         if (static::isFloat($number)) {
@@ -657,7 +681,7 @@ class BC
         return static::parseNumber($number);
     }
 
-    public static function roundUp(string $number, int $precision = 0): string
+    public static function roundUp(?string $number, int $precision = 0): string
     {
         $number = static::convertScientificNotationToString($number);
         $multiply = static::pow('10', (string)abs($precision));
@@ -677,7 +701,7 @@ class BC
             );
     }
 
-    public static function ceil(string $number): string
+    public static function ceil(?string $number): string
     {
         $number = static::trimTrailingZeroes(static::convertScientificNotationToString($number));
         if (static::isFloat($number)) {
@@ -691,7 +715,7 @@ class BC
         return static::parseNumber($number);
     }
 
-    public static function roundDown(string $number, int $precision = 0): string
+    public static function roundDown(?string $number, int $precision = 0): string
     {
         $number = static::convertScientificNotationToString($number);
         $multiply = static::pow('10', (string)abs($precision));
