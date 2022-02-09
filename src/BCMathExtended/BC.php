@@ -37,7 +37,7 @@ class BC
 
     public static function convertScientificNotationToString(string $number): string
     {
-        // check if number is in scientific notation, first use stripos as is faster then preg_match
+        // check if number is in scientific notation, first use stripos as is faster than preg_match
         if (false !== stripos($number, 'E') && preg_match('/(-?(\d+\.)?\d+)E([+-]?)(\d+)/i', $number, $regs)) {
             // calculate final scale of number
             $scale = $regs[4] + static::getDecimalsLength($regs[1]);
@@ -136,7 +136,7 @@ class BC
             return $number;
         }
 
-        // old one not so much..
+        // old one not so much
         return self::addTrailingZeroes($number, $scale);
     }
 
@@ -375,7 +375,7 @@ class BC
             throw new UnexpectedValueException('bcpowmod should not return null!');
         }
 
-        return static::formatTrailingZeroes($r, $scale);
+        return static::formatTrailingZeroes($r);
     }
 
     protected static function isNegative(string $number): bool
@@ -434,7 +434,7 @@ class BC
 
     public static function hexdec(string $hex): string
     {
-        $remainingDigits = substr($hex, 0, -1);
+        $remainingDigits = str_replace('0x', '', substr($hex, 0, -1));
         $lastDigitToDecimal = (string)hexdec(substr($hex, -1));
 
         if ('' === $remainingDigits) {
@@ -627,7 +627,7 @@ class BC
             return static::round($number, $precision);
         }
 
-        if ($number[$precessionPos] !== '5') {
+        if ($number[-1] !== '5') {
             return static::round($number, $precision);
         }
 
@@ -694,6 +694,10 @@ class BC
     public static function roundDown(string $number, int $precision = 0): string
     {
         $number = static::convertScientificNotationToString($number);
+        if (!static::isFloat($number)) {
+            return $number;
+        }
+
         $multiply = static::pow('10', (string)abs($precision));
 
         return $precision < 0
