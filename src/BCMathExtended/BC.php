@@ -660,21 +660,26 @@ class BC
     public static function roundUp(string $number, int $precision = 0): string
     {
         $number = static::convertScientificNotationToString($number);
+        if (!static::isFloat($number)) {
+            return $number;
+        }
         $multiply = static::pow('10', (string)abs($precision));
 
-        return $precision < 0
-            ?
-            static::mul(
-                static::ceil(static::div($number, $multiply, static::getDecimalsLength($number))),
-                $multiply,
-                (int)abs($precision)
-            )
-            :
-            static::div(
-                static::ceil(static::mul($number, $multiply, static::getDecimalsLength($number))),
-                $multiply,
-                $precision
-            );
+        return static::parseNumber(
+            $precision < 0
+                ?
+                static::mul(
+                    static::ceil(static::div($number, $multiply, static::getDecimalsLength($number))),
+                    $multiply,
+                    (int)abs($precision)
+                )
+                :
+                static::div(
+                    static::ceil(static::mul($number, $multiply, static::getDecimalsLength($number))),
+                    $multiply,
+                    $precision
+                )
+        );
     }
 
     public static function ceil(string $number): string
@@ -697,21 +702,22 @@ class BC
         if (!static::isFloat($number)) {
             return $number;
         }
-
         $multiply = static::pow('10', (string)abs($precision));
 
-        return $precision < 0
-            ?
-            static::mul(
-                static::floor(static::div($number, $multiply, static::getDecimalsLength($number))),
-                $multiply,
-                (int)abs($precision)
-            )
-            :
-            static::div(
-                static::floor(static::mul($number, $multiply, static::getDecimalsLength($number))),
-                $multiply,
-                $precision
-            );
+        return static::parseNumber(
+            $precision < 0
+                ?
+                static::mul(
+                    static::floor(static::div($number, $multiply, static::getDecimalsLength($number))),
+                    $multiply,
+                    (int)abs($precision)
+                )
+                :
+                static::div(
+                    static::floor(static::mul($number, $multiply, static::getDecimalsLength($number))),
+                    $multiply,
+                    $precision
+                )
+        );
     }
 }
