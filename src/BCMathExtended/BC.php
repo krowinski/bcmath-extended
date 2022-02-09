@@ -619,7 +619,7 @@ class BC
     {
         $number = static::convertScientificNotationToString($number);
         if (!static::isFloat($number)) {
-            return static::parseNumber($number);
+            return $number;
         }
 
         $precessionPos = strpos($number, '.') + $precision + 1;
@@ -648,10 +648,10 @@ class BC
         $number = static::convertScientificNotationToString($number);
         if (static::isFloat($number)) {
             if (static::isNegative($number)) {
-                return static::sub($number, '0.' . str_repeat('0', $precision) . '5', $precision);
+                $number = static::sub($number, '0.' . str_repeat('0', $precision) . '5', $precision);
+            } else {
+                $number = static::add($number, '0.' . str_repeat('0', $precision) . '5', $precision);
             }
-
-            return static::add($number, '0.' . str_repeat('0', $precision) . '5', $precision);
         }
 
         return static::parseNumber($number);
