@@ -302,6 +302,7 @@ class BCTest extends TestCase
             ['0.08', '0.075', 2],
             ['0.08', '0.085', 2],
             ['1.13', '1.1259', 2],
+            ['100', '100', 0],
         ];
     }
 
@@ -990,9 +991,9 @@ class BCTest extends TestCase
 
     public function testThrowErrorOnZeroModPowModulus(): void
     {
-        $this->expectExceptionMessage('Exponent can\'t be negative');
+        $this->expectExceptionMessage('Modulus can\'t be zero');
         $this->expectException(InvalidArgumentException::class);
-        BC::powMod('10000.123', '-1', '2');
+        BC::powMod('10000.123', '1', '0');
     }
 
     public function testThrowErrorOnFloatOrLeftOperator(): void

@@ -6,7 +6,6 @@ namespace BCMathExtended;
 
 use Closure;
 use InvalidArgumentException;
-use UnexpectedValueException;
 
 class BC
 {
@@ -190,11 +189,7 @@ class BC
             $r = bcdiv($dividend, $divisor, $scale);
         }
 
-        if ($r === null) {
-            throw new UnexpectedValueException('bcdiv should not return null!');
-        }
-
-        return static::formatTrailingZeroes($r);
+        return static::formatTrailingZeroes((string)$r);
     }
 
     public static function log(string $number): string
