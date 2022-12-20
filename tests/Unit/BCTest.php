@@ -10,6 +10,11 @@ use PHPUnit\Framework\TestCase;
 
 class BCTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        BC::setScale(2);
+    }
+
     public function scientificNotationProvider(): array
     {
         return [
@@ -80,10 +85,9 @@ class BCTest extends TestCase
     }
 
     /**
-     * @test
      * @dataProvider scientificNotationProvider
      */
-    public function shouldConvertScientificNotationToString(string $expected, string $number): void
+    public function testConvertScientificNotationToString(string $expected, string $number): void
     {
         self::assertSame($expected, BC::convertScientificNotationToString($number));
     }
@@ -119,10 +123,9 @@ class BCTest extends TestCase
     }
 
     /**
-     * @test
      * @dataProvider ceilProvider
      */
-    public function shouldCeil(string $expected, string $number): void
+    public function testCeil(string $expected, string $number): void
     {
         self::assertSame($expected, BC::ceil($number));
     }
@@ -165,10 +168,9 @@ class BCTest extends TestCase
     }
 
     /**
-     * @test
      * @dataProvider floorProvider
      */
-    public function shouldFloor(string $expected, string $number): void
+    public function testFloor(string $expected, string $number): void
     {
         self::assertSame($expected, BC::floor($number));
     }
@@ -198,10 +200,9 @@ class BCTest extends TestCase
     }
 
     /**
-     * @test
      * @dataProvider absProvider
      */
-    public function shouldAbs(string $expected, string $number): void
+    public function testAbs(string $expected, string $number): void
     {
         self::assertSame($expected, BC::abs($number));
     }
@@ -266,10 +267,9 @@ class BCTest extends TestCase
     }
 
     /**
-     * @test
      * @dataProvider roundProvider
      */
-    public function shouldRound(string $expected, string $number, int $precision = 0): void
+    public function testRound(string $expected, string $number, int $precision = 0): void
     {
         self::assertSame($expected, BC::round($number, $precision));
     }
@@ -306,10 +306,9 @@ class BCTest extends TestCase
     }
 
     /**
-     * @test
      * @dataProvider roundHalfEvenProvider
      */
-    public function shouldRoundHalfEven(string $expected, string $number, int $precision = 0): void
+    public function testRoundHalfEven(string $expected, string $number, int $precision = 0): void
     {
         self::assertSame($expected, BC::roundHalfEven($number, $precision));
     }
@@ -323,20 +322,16 @@ class BCTest extends TestCase
     }
 
     /**
-     * @test
      * @dataProvider randProvider
      */
-    public function shouldRand(string $left, string $right): void
+    public function testRand(string $left, string $right): void
     {
         $rand = BC::rand($left, $right);
         self::assertTrue($rand >= $left);
         self::assertTrue($rand <= $right);
     }
 
-    /**
-     * @test
-     */
-    public function shouldMax(): void
+    public function testMax(): void
     {
         self::assertSame('3', BC::max(1, 2, 3));
         self::assertSame('6', BC::max(6, 3, 2));
@@ -356,10 +351,7 @@ class BCTest extends TestCase
         self::assertSame('0.00000000099999', BC::max(9.9999E-10, -5.6E-4));
     }
 
-    /**
-     * @test
-     */
-    public function shouldMin(): void
+    public function testMin(): void
     {
         self::assertSame('7.20', BC::min('7.30', '7.20'));
         self::assertSame('3', BC::min([3, 5, 677]));
@@ -377,7 +369,6 @@ class BCTest extends TestCase
         self::assertSame('-0.00056', BC::min(9.9999E-10, -5.6E-4));
     }
 
-
     public function setScaleProvider(): array
     {
         return [
@@ -388,10 +379,9 @@ class BCTest extends TestCase
     }
 
     /**
-     * @test
      * @dataProvider setScaleProvider
      */
-    public function shouldSetScale(?int $scale, string $expected, string $left, string $right): void
+    public function testSetScale(int $scale, string $expected, string $left, string $right): void
     {
         BC::setScale($scale);
         self::assertSame($expected, BC::add($left, $right));
@@ -421,10 +411,9 @@ class BCTest extends TestCase
     }
 
     /**
-     * @test
      * @dataProvider roundUpProvider
      */
-    public function shouldRoundUp(string $expected, string $number, int $precision = 0): void
+    public function testRoundUp(string $expected, string $number, int $precision = 0): void
     {
         self::assertSame($expected, BC::roundUp($number, $precision));
     }
@@ -454,11 +443,9 @@ class BCTest extends TestCase
     }
 
     /**
-     * @test
      * @dataProvider roundDownProvider
-     * @param int|float|string $number
      */
-    public function shouldRoundDown(string $expected, string $number, int $precision = 0): void
+    public function testRoundDown(string $expected, string $number, int $precision = 0): void
     {
         self::assertSame($expected, BC::roundDown($number, $precision));
     }
@@ -479,18 +466,14 @@ class BCTest extends TestCase
     }
 
     /**
-     * @test
      * @dataProvider addProvider
      */
-    public function shouldAdd(string $expected, string $left, string $right, ?int $scale = 0): void
+    public function testAdd(string $expected, string $left, string $right, ?int $scale = 0): void
     {
         self::assertSame($expected, BC::add($left, $right, $scale));
     }
 
-    /**
-     * @test
-     */
-    public function shouldAddUsingGlobalScale(): void
+    public function testAddUsingGlobalScale(): void
     {
         BC::setScale(0);
         self::assertSame('2', BC::add('1', '1.05'));
@@ -500,10 +483,7 @@ class BCTest extends TestCase
         self::assertSame('2.05', BC::add('1', '1.05'));
     }
 
-    /**
-     * @test
-     */
-    public function shouldSubUsingGlobalScale(): void
+    public function testSubUsingGlobalScale(): void
     {
         BC::setScale(0);
         self::assertSame('-1', BC::sub('1', '2.5'));
@@ -527,10 +507,9 @@ class BCTest extends TestCase
     }
 
     /**
-     * @test
      * @dataProvider subProvider
      */
-    public function shouldSub(string $expected, string $left, string $right, ?int $scale = 0): void
+    public function testSub(string $expected, string $left, string $right, ?int $scale = 0): void
     {
         self::assertSame($expected, BC::sub($left, $right, $scale));
     }
@@ -554,10 +533,9 @@ class BCTest extends TestCase
     }
 
     /**
-     * @test
      * @dataProvider compProvider
      */
-    public function shouldComp(string $left, string $right, int $expected, int $scale): void
+    public function testComp(string $left, string $right, int $expected, int $scale): void
     {
         self::assertSame($expected, BC::comp($left, $right, $scale));
     }
@@ -572,10 +550,9 @@ class BCTest extends TestCase
     }
 
     /**
-     * @test
      * @dataProvider getScaleProvider
      */
-    public function shouldGetScale(int $expected): void
+    public function testGetScale(int $expected): void
     {
         BC::setScale($expected);
 
@@ -593,28 +570,21 @@ class BCTest extends TestCase
     }
 
     /**
-     * @test
      * @dataProvider divProvider
      */
-    public function shouldDiv(string $expected, string $left, string $right, ?int $scale): void
+    public function testDiv(string $expected, string $left, string $right, ?int $scale): void
     {
         self::assertSame($expected, BC::div($left, $right, $scale));
     }
 
-    /**
-     * @test
-     */
-    public function shouldThrowDivByZero(): void
+    public function testThrowDivByZero(): void
     {
         $this->expectExceptionMessage('Division by zero');
         $this->expectException(InvalidArgumentException::class);
         BC::div('1', '0');
     }
 
-    /**
-     * @test
-     */
-    public function shouldDivUsingGlobalScale(): void
+    public function testDivUsingGlobalScale(): void
     {
         BC::setScale(0);
         self::assertSame('0', BC::div('1', '2'));
@@ -642,14 +612,12 @@ class BCTest extends TestCase
     }
 
     /**
-     * @test
      * @dataProvider modProvider
      */
-    public function shouldMod(string $expected, string $left, string $right, int $scale): void
+    public function testMod(string $expected, string $left, string $right, int $scale): void
     {
         self::assertSame($expected, BC::mod($left, $right, $scale));
     }
-
 
     public function mulProvider(): array
     {
@@ -673,14 +641,12 @@ class BCTest extends TestCase
     }
 
     /**
-     * @test
      * @dataProvider mulProvider
      */
-    public function shouldMul(string $leftOperand, string $rightOperand, string $expected, ?int $scale): void
+    public function testMul(string $leftOperand, string $rightOperand, string $expected, ?int $scale): void
     {
         self::assertSame($expected, BC::mul($leftOperand, $rightOperand, $scale));
     }
-
 
     public function powProvider(): array
     {
@@ -704,15 +670,14 @@ class BCTest extends TestCase
             ['1', '10', '0.0000001', 0],
             ['1', '10', '0.0000001', 2],
             ['36.029', '5.1', '2.2', 3],
-            ['0.5492944034820568190269179209773099881437', '1.005', '-120.12345678', 40]
+            ['0.5492944034820568190269179209773099881437', '1.005', '-120.12345678', 40],
         ];
     }
 
     /**
-     * @test
      * @dataProvider powProvider
      */
-    public function shouldPow(string $expected, string $left, string $right, ?int $scale = 0): void
+    public function testPow(string $expected, string $left, string $right, ?int $scale = 0): void
     {
         self::assertSame($expected, BC::pow($left, $right, $scale));
     }
@@ -744,10 +709,9 @@ class BCTest extends TestCase
     }
 
     /**
-     * @test
      * @dataProvider logProvider
      */
-    public function shouldLog(string $expected, string $value): void
+    public function testLog(string $expected, string $value): void
     {
         self::assertSame($expected, BC::log($value));
     }
@@ -779,10 +743,9 @@ class BCTest extends TestCase
     }
 
     /**
-     * @test
      * @dataProvider expProvider
      */
-    public function shouldExp(string $expected, string $arg): void
+    public function testExp(string $expected, string $arg): void
     {
         self::assertSame($expected, BC::exp($arg));
     }
@@ -803,38 +766,28 @@ class BCTest extends TestCase
     }
 
     /**
-     * @test
      * @dataProvider factProvider
      */
-    public function shouldFact(string $expected, string $fact): void
+    public function testFact(string $expected, string $fact): void
     {
         self::assertSame($expected, BC::fact($fact));
     }
 
-    /**
-     * @test
-     */
-    public function shouldFactThrowErrorOnFloat(): void
+    public function testFactThrowErrorOnFloat(): void
     {
         $this->expectExceptionMessage('Number has to be an integer');
         $this->expectException(InvalidArgumentException::class);
         BC::fact('1.1');
     }
 
-    /**
-     * @test
-     */
-    public function shouldFactThrowErrorOnNegative(): void
+    public function testFactThrowErrorOnNegative(): void
     {
         $this->expectExceptionMessage('Number has to be greater than or equal to 0');
         $this->expectException(InvalidArgumentException::class);
         BC::fact('-1');
     }
 
-    /**
-     * @test
-     */
-    public function shouldPowUsingGlobalScale(): void
+    public function testPowUsingGlobalScale(): void
     {
         BC::setScale(0);
         self::assertSame('74', BC::pow('4.2', '3'));
@@ -862,10 +815,9 @@ class BCTest extends TestCase
     }
 
     /**
-     * @test
      * @dataProvider powModProvider
      */
-    public function shouldPowMod(string $expected, string $left, string $right, string $modulus, ?int $scale): void
+    public function testPowMod(string $expected, string $left, string $right, string $modulus, ?int $scale): void
     {
         self::assertSame($expected, BC::powMod($left, $right, $modulus, $scale));
     }
@@ -881,18 +833,14 @@ class BCTest extends TestCase
     }
 
     /**
-     * @test
      * @dataProvider sqrtProvider
      */
-    public function shouldSqrt(string $expected, string $operand, int $scale): void
+    public function testSqrt(string $expected, string $operand, int $scale): void
     {
         self::assertSame($expected, BC::sqrt($operand, $scale));
     }
 
-    /**
-     * @test
-     */
-    public function shouldSqrtUsingGlobalScale(): void
+    public function testSqrtUsingGlobalScale(): void
     {
         BC::setScale(0);
         self::assertSame('3', BC::sqrt('9.444'));
@@ -911,15 +859,17 @@ class BCTest extends TestCase
             ['123456789012345678901234567890', '18ee90ff6c373e0ee4e3f0ad2'],
             ['1234567890123456789012345678901234567890', '3a0c92075c0dbf3b8acbc5f96ce3f0ad2'],
             ['1234567890123456789012345678901234567890', '3a0c92075c0dbf3b8acbc5f96ce3f0ad2'],
-            ['21711016733383976335769713789619838426107890367109022384973563144062439196678', '0x300000000d2c12440c4310c20c2428c20c8330cc0ca318ca0cc330cc0c230806'],
+            [
+                '21711016733383976335769713789619838426107890367109022384973563144062439196678',
+                '0x300000000d2c12440c4310c20c2428c20c8330cc0ca318ca0cc330cc0c230806',
+            ],
         ];
     }
 
     /**
-     * @test
      * @dataProvider hexdecProvider
      */
-    public function shouldHexdec(string $expected, string $operand): void
+    public function testHexdec(string $expected, string $operand): void
     {
         self::assertSame($expected, BC::hexdec($operand));
     }
@@ -937,30 +887,28 @@ class BCTest extends TestCase
     }
 
     /**
-     * @test
      * @dataProvider dechexProvider
      */
-    public function shouldDechex(string $expected, string $operand): void
+    public function testDechex(string $expected, string $operand): void
     {
         self::assertSame($expected, BC::dechex($operand));
     }
 
     /**
-     * @test
-     * @dataProvider shouldBitAddProvider
+     * @dataProvider bitAddProvider
      */
-    public function shouldBitAdd(string $expected, string $left, string $right): void
+    public function testBitAdd(string $expected, string $left, string $right): void
     {
         self::assertSame($expected, BC::bitAnd($left, $right));
     }
 
-    public function shouldBitAddProvider(): array
+    public function bitAddProvider(): array
     {
         return [
             [
                 '2972225677459078825024027220918272',
                 '1000000000865464564564564567867867867800000',
-                '5000788676546456456458678760000000'
+                '5000788676546456456458678760000000',
             ],
             ['610237752474644548', '543543543534543534543534543 ', '4213434324324234324'],
             ['0', '0', '0'],
@@ -975,21 +923,20 @@ class BCTest extends TestCase
     }
 
     /**
-     * @test
-     * @dataProvider shouldBitOrProvider
+     * @dataProvider bitOrProvider
      */
-    public function shouldBitOr(string $expected, string $left, string $right): void
+    public function testBitOr(string $expected, string $left, string $right): void
     {
         self::assertSame($expected, BC::bitOr($left, $right));
     }
 
-    public function shouldBitOrProvider(): array
+    public function bitOrProvider(): array
     {
         return [
             [
                 '1000000002894027563651942199302519406881728',
                 '1000000000865464564564564567867867867800000',
-                '5000788676546456456458678760000000'
+                '5000788676546456456458678760000000',
             ],
             ['543543547137740106393124319', '543543543534543534543534543 ', '4213434324324234324'],
             ['0', '0', '0'],
@@ -1006,15 +953,14 @@ class BCTest extends TestCase
     }
 
     /**
-     * @test
-     * @dataProvider shouldBitXorProvider
+     * @dataProvider bitXorProvider
      */
-    public function shouldBitXor(string $expected, string $left, string $right): void
+    public function testBitXor(string $expected, string $left, string $right): void
     {
         self::assertSame($expected, BC::bitXor($left, $right));
     }
 
-    public function shouldBitXorProvider(): array
+    public function bitXorProvider(): array
     {
         return [
             ['7', '2', '5'],
@@ -1028,80 +974,56 @@ class BCTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     */
-    public function shouldThrowErrorOnFloatXorLeftOperator(): void
+    public function testThrowErrorOnFloatXorLeftOperator(): void
     {
         $this->expectExceptionMessage('Left operator has to be an integer');
         $this->expectException(InvalidArgumentException::class);
         BC::bitXor('0.001', '1');
     }
 
-    /**
-     * @test
-     */
-    public function shouldThrowErrorOnNegativeModPowExponent(): void
+    public function testThrowErrorOnNegativeModPowExponent(): void
     {
         $this->expectExceptionMessage('Exponent can\'t be negative');
         $this->expectException(InvalidArgumentException::class);
         BC::powMod('10000.123', '-1', '2');
     }
 
-    /**
-     * @test
-     */
-    public function shouldThrowErrorOnZeroModPowModulus(): void
+    public function testThrowErrorOnZeroModPowModulus(): void
     {
         $this->expectExceptionMessage('Exponent can\'t be negative');
         $this->expectException(InvalidArgumentException::class);
         BC::powMod('10000.123', '-1', '2');
     }
 
-    /**
-     * @test
-     */
-    public function shouldThrowErrorOnFloatOrLeftOperator(): void
+    public function testThrowErrorOnFloatOrLeftOperator(): void
     {
         $this->expectExceptionMessage('Left operator has to be an integer');
         $this->expectException(InvalidArgumentException::class);
         BC::bitOr('0.001', '1');
     }
 
-    /**
-     * @test
-     */
-    public function shouldThrowErrorOnFloatAndLeftOperator(): void
+    public function testThrowErrorOnFloatAndLeftOperator(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Left operator has to be an integer');
         BC::bitAnd('0.001', '1');
     }
 
-    /**
-     * @test
-     */
-    public function shouldThrowErrorOnFloatXorRightOperator(): void
+    public function testThrowErrorOnFloatXorRightOperator(): void
     {
         $this->expectExceptionMessage('Right operator has to be an integer');
         $this->expectException(InvalidArgumentException::class);
         BC::bitXor('1', '0.001');
     }
 
-    /**
-     * @test
-     */
-    public function shouldThrowErrorOnFloatOrRightOperator(): void
+    public function testThrowErrorOnFloatOrRightOperator(): void
     {
         $this->expectExceptionMessage('Right operator has to be an integer');
         $this->expectException(InvalidArgumentException::class);
         BC::bitOr('1', '0.001');
     }
 
-    /**
-     * @test
-     */
-    public function shouldThrowErrorOnFloatAndRightOperator(): void
+    public function testThrowErrorOnFloatAndRightOperator(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Right operator has to be an integer');
@@ -1109,51 +1031,41 @@ class BCTest extends TestCase
     }
 
     /**
-     * @test
-     * @dataProvider shouldConvertBinaryProvider
+     * @dataProvider convertBinaryProvider
      */
-    public function shouldConvertBinary(string $expected, string $base64binary): void
+    public function testConvertBinary(string $expected, string $base64binary): void
     {
-        $decoded = base64_decode($base64binary);
+        $decoded = (string)base64_decode($base64binary, true);
         self::assertSame($expected, BC::bin2dec($decoded));
         self::assertSame($decoded, BC::dec2bin($expected));
     }
 
-    public function shouldConvertBinaryProvider(): array
+    public function convertBinaryProvider(): array
     {
         return [
             ['1000000000865464564564564567867867867800000', 'C3q8Ypr74y+H5r28hvnkbmHA'],
             ['5000788676546456456458678760000000', '9o7TsLbE7mZg8DmCSgA'],
             ['543543543534543534543534543', 'AcGb0ol63k727vnP'],
             ['2', 'Ag=='],
-            ['48', 'MA==']
+            ['48', 'MA=='],
         ];
     }
 
-    /**
-     * @test
-     */
-    public function shouldThrowErrorOnIncorrectBaseInBin2Dec(): void
+    public function testThrowErrorOnIncorrectBaseInBin2Dec(): void
     {
         $this->expectExceptionMessage('Invalid Base: 300');
         $this->expectException(InvalidArgumentException::class);
         BC::bin2dec('', 300);
     }
 
-    /**
-     * @test
-     */
-    public function shouldThrowErrorOnIncorrectBaseInDec2Bin(): void
+    public function testThrowErrorOnIncorrectBaseInDec2Bin(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid Base: 600');
         BC::dec2bin('1', 600);
     }
 
-    /**
-     * @test
-     */
-    public function shouldCorrectFormatTrailingZeros(): void
+    public function testCorrectFormatTrailingZeros(): void
     {
         BC::setTrimTrailingZeroes(false);
 
@@ -1180,10 +1092,5 @@ class BCTest extends TestCase
         self::assertEquals('1111.923', BC::mod('10000.123', '4444.1', 10));
         self::assertEquals('-50000000000', BC::convertScientificNotationToString('-5e+10'));
         self::assertEquals('10000.123', BC::round('10000.123', 6));
-    }
-
-    protected function setUp(): void
-    {
-        BC::setScale(2);
     }
 }

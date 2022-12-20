@@ -48,13 +48,13 @@ Features
         - bitAnd
 - proxy for original functions (http://php.net/manual/en/book.bc.php)
 - all functions supports scientific notation
-- all functions are static, so it can be easy replaced by this lib
+- all functions are static, so it can be easily replaced by this lib
 
 Info
 ===
-As of 7.2 float can be passed to bcmod but they don't return correct values (IMO)
+As of 7.2 float can be passed to bcmod, but they don't return correct values (IMO)
 
-I created bug for this in https://bugs.php.net/bug.php?id=76287 but it was commented as documentation issue not a bug.
+I created bug for this in https://bugs.php.net/bug.php?id=76287, but it was commented as documentation issue not a bug.
 
 ```
 bcmod() doesn't use floor() but rather truncates towards zero,

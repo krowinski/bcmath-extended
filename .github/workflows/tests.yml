@@ -7,7 +7,7 @@ jobs:
 
     strategy:
       matrix:
-        php: [ '7.1', '7.2', '7.3', '7.4', '8.0', '8.1' ]
+        php: [ '7.4', '8.0', '8.1', '8.2' ]
 
     steps:
       - name: Checkout
@@ -37,3 +37,9 @@ jobs:
 
       - name: Run tests
         run: vendor/bin/phpunit --coverage-text
+
+      - name: PHPStan analyse
+        run: composer phpstan:analyse
+
+      - name: Coding standards check
+        run: composer cs:check
