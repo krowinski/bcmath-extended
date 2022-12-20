@@ -1,0 +1,8 @@
+parameters:
+  level: 9
+  phpVersion: 70400
+  checkMissingIterableValueType: false
+  tmpDir: .cache/phpstan/
+  paths:
+    - src
+    - tests

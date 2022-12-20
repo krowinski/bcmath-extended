@@ -1,7 +1,7 @@
 > Please provide the following details.
 
 * *Operating System*: <Linux | Windows | OS X>
-* *PHP Version*: <5.6 | 7.0 | ...>
+* *PHP Version*: <7.4 | 8.2 | ...>
 
 > Steps required to reproduce the problem.
 
