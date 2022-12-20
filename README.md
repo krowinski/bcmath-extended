@@ -1,5 +1,5 @@
 # bcmath-extended
-[![PHP Tests](https://github.com/krowinski/bcmath-extended/actions/workflows/tests.yml/badge.svg)](https://github.com/krowinski/bcmath-extended/actions/workflows/tests.yml))
+[![PHP Tests](https://github.com/krowinski/bcmath-extended/actions/workflows/tests.yml/badge.svg)](https://github.com/krowinski/bcmath-extended/actions/workflows/tests.yml)
 [![Code Coverage](https://raw.githubusercontent.com/krowinski/bcmath-extended/master/badge-coverage.svg)](https://scrutinizer-ci.com/g/krowinski/bcmath-extended/?branch=master)
 [![Latest Stable Version](https://poser.pugx.org/krowinski/bcmath-extended/v/stable)](https://packagist.org/packages/krowinski/bcmath-extended)
 [![Total Downloads](https://poser.pugx.org/krowinski/bcmath-extended/downloads)](https://packagist.org/packages/krowinski/bcmath-extended)
