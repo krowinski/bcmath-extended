@@ -1070,28 +1070,28 @@ class BCTest extends TestCase
     {
         BC::setTrimTrailingZeroes(false);
 
-        self::assertEquals('64.0000000000', BC::pow('8', '2', 10));
-        self::assertEquals('2.0000', BC::sqrt('4', 4));
-        self::assertEquals('14444.2230000000', BC::add('10000.123', '4444.1', 10));
-        self::assertEquals('19.524770142330000', BC::mul('9.123767', '2.13999', 15));
-        self::assertEquals('2.00', BC::div('4.000', '2.0', 2));
-        self::assertEquals('5556.0230000000', BC::sub('10000.123', '4444.1', 10));
-        self::assertEquals('1.35', BC::powMod('10000.123', '4444.1', '2'));
-        self::assertEquals('1111.9230000000', BC::mod('10000.123', '4444.1', 10));
-        self::assertEquals('-50000000000.0000000000', BC::convertScientificNotationToString('-5e+10'));
-        self::assertEquals('10000.123000', BC::round('10000.123', 6));
+        self::assertSame('64.0000000000', BC::pow('8', '2', 10));
+        self::assertSame('2.0000', BC::sqrt('4', 4));
+        self::assertSame('14444.2230000000', BC::add('10000.123', '4444.1', 10));
+        self::assertSame('19.524770142330000', BC::mul('9.123767', '2.13999', 15));
+        self::assertSame('2.00', BC::div('4.000', '2.0', 2));
+        self::assertSame('5556.0230000000', BC::sub('10000.123', '4444.1', 10));
+        self::assertSame('1.35', BC::powMod('10000.123', '4444.1', '2'));
+        self::assertSame('1111.9230000000', BC::mod('10000.123', '4444.1', 10));
+        self::assertSame('-50000000000.0000000000', BC::convertScientificNotationToString('-5e+10'));
+        self::assertSame('10000.123000', BC::round('10000.123', 6));
 
         BC::setTrimTrailingZeroes(true);
 
-        self::assertEquals('64', BC::pow('8', '2', 10));
-        self::assertEquals('2', BC::sqrt('4', 4));
-        self::assertEquals('14444.223', BC::add('10000.123', '4444.1', 10));
-        self::assertEquals('19.52477014233', BC::mul('9.123767', '2.13999', 15));
-        self::assertEquals('2', BC::div('4.000', '2.0', 2));
-        self::assertEquals('5556.023', BC::sub('10000.123', '4444.1', 10));
-        self::assertEquals('1.35', BC::powMod('10000.123', '4444.1', '2'));
-        self::assertEquals('1111.923', BC::mod('10000.123', '4444.1', 10));
-        self::assertEquals('-50000000000', BC::convertScientificNotationToString('-5e+10'));
-        self::assertEquals('10000.123', BC::round('10000.123', 6));
+        self::assertSame('64', BC::pow('8', '2', 10));
+        self::assertSame('2', BC::sqrt('4', 4));
+        self::assertSame('14444.223', BC::add('10000.123', '4444.1', 10));
+        self::assertSame('19.52477014233', BC::mul('9.123767', '2.13999', 15));
+        self::assertSame('2', BC::div('4.000', '2.0', 2));
+        self::assertSame('5556.023', BC::sub('10000.123', '4444.1', 10));
+        self::assertSame('1.35', BC::powMod('10000.123', '4444.1', '2'));
+        self::assertSame('1111.923', BC::mod('10000.123', '4444.1', 10));
+        self::assertSame('-50000000000', BC::convertScientificNotationToString('-5e+10'));
+        self::assertSame('10000.123', BC::round('10000.123', 6));
     }
 }
