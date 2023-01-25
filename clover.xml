@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1671563841">
-  <project timestamp="1671563841">
+<coverage generated="1674682269">
+  <project timestamp="1674682269">
     <file name="/home/runner/work/bcmath-extended/bcmath-extended/src/BCMathExtended/BC.php">
       <class name="BCMathExtended\BC" namespace="global">
         <metrics complexity="119" methods="45" coveredmethods="45" conditionals="0" coveredconditionals="0" statements="324" coveredstatements="324" elements="369" coveredelements="369"/>
