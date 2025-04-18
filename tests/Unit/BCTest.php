@@ -6,6 +6,7 @@ namespace BCMathExtended\Tests\Unit;
 
 use BCMathExtended\BC;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class BCTest extends TestCase
@@ -15,7 +16,7 @@ class BCTest extends TestCase
         BC::setScale(2);
     }
 
-    public function scientificNotationProvider(): array
+    public static function scientificNotationProvider(): array
     {
         return [
             ['0', '-0'],
@@ -84,15 +85,13 @@ class BCTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider scientificNotationProvider
-     */
+    #[DataProvider('scientificNotationProvider')]
     public function testConvertScientificNotationToString(string $expected, string $number): void
     {
         self::assertSame($expected, BC::convertScientificNotationToString($number));
     }
 
-    public function ceilProvider(): array
+    public static function ceilProvider(): array
     {
         return [
             ['0', '-0'],
@@ -122,15 +121,13 @@ class BCTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider ceilProvider
-     */
+    #[DataProvider('ceilProvider')]
     public function testCeil(string $expected, string $number): void
     {
         self::assertSame($expected, BC::ceil($number));
     }
 
-    public function floorProvider(): array
+    public static function floorProvider(): array
     {
         return [
             ['0', '-0'],
@@ -151,14 +148,8 @@ class BCTest extends TestCase
             ['20000', '2/0000'],
             ['-60000', '-6/0000'],
             ['1000000000000000000000000000000', '+1/000000000000000000000000000000'],
-            [
-                '99999999999999999999999999999999999',
-                '99999999999999999999999999999999999.000000000000000000000',
-            ],
-            [
-                '99999999999999999999999999999999999',
-                '99999999999999999999999999999999999.999999999999999999999',
-            ],
+            ['99999999999999999999999999999999999', '99999999999999999999999999999999999.000000000000000000000'],
+            ['99999999999999999999999999999999999', '99999999999999999999999999999999999.999999999999999999999'],
             ['0', '0-'],
             ['100000000000000000000000000000000000', '1.0E+35'],
             ['-100000000000000000000000000000000000', '-1.0E+35'],
@@ -167,15 +158,13 @@ class BCTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider floorProvider
-     */
+    #[DataProvider('floorProvider')]
     public function testFloor(string $expected, string $number): void
     {
         self::assertSame($expected, BC::floor($number));
     }
 
-    public function absProvider(): array
+    public static function absProvider(): array
     {
         return [
             ['1', '-1'],
@@ -199,15 +188,13 @@ class BCTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider absProvider
-     */
+    #[DataProvider('absProvider')]
     public function testAbs(string $expected, string $number): void
     {
         self::assertSame($expected, BC::abs($number));
     }
 
-    public function roundProvider(): array
+    public static function roundProvider(): array
     {
         return [
             ['3', '3.4'],
@@ -266,15 +253,13 @@ class BCTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider roundProvider
-     */
+    #[DataProvider('roundProvider')]
     public function testRound(string $expected, string $number, int $precision = 0): void
     {
         self::assertSame($expected, BC::round($number, $precision));
     }
 
-    public function roundHalfEvenProvider(): array
+    public static function roundHalfEvenProvider(): array
     {
         return [
             ['2', '1.8'],
@@ -306,15 +291,13 @@ class BCTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider roundHalfEvenProvider
-     */
+    #[DataProvider('roundHalfEvenProvider')]
     public function testRoundHalfEven(string $expected, string $number, int $precision = 0): void
     {
         self::assertSame($expected, BC::roundHalfEven($number, $precision));
     }
 
-    public function randProvider(): array
+    public static function randProvider(): array
     {
         return [
             ['1', '3'],
@@ -322,9 +305,7 @@ class BCTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider randProvider
-     */
+    #[DataProvider('randProvider')]
     public function testRand(string $left, string $right): void
     {
         $rand = BC::rand($left, $right);
@@ -370,25 +351,19 @@ class BCTest extends TestCase
         self::assertSame('-0.00056', BC::min(9.9999E-10, -5.6E-4));
     }
 
-    public function setScaleProvider(): array
+    public static function setScaleProvider(): array
     {
-        return [
-            [50, '3', '1', '2'],
-            [0, '3', '1', '2'],
-            [13, '3', '1', '2'],
-        ];
+        return [[50, '3', '1', '2'], [0, '3', '1', '2'], [13, '3', '1', '2']];
     }
 
-    /**
-     * @dataProvider setScaleProvider
-     */
+    #[DataProvider('setScaleProvider')]
     public function testSetScale(int $scale, string $expected, string $left, string $right): void
     {
         BC::setScale($scale);
         self::assertSame($expected, BC::add($left, $right));
     }
 
-    public function roundUpProvider(): array
+    public static function roundUpProvider(): array
     {
         return [
             ['663', '662.79'],
@@ -411,15 +386,13 @@ class BCTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider roundUpProvider
-     */
+    #[DataProvider('roundUpProvider')]
     public function testRoundUp(string $expected, string $number, int $precision = 0): void
     {
         self::assertSame($expected, BC::roundUp($number, $precision));
     }
 
-    public function roundDownProvider(): array
+    public static function roundDownProvider(): array
     {
         return [
             ['662', '662.79'],
@@ -443,15 +416,13 @@ class BCTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider roundDownProvider
-     */
+    #[DataProvider('roundDownProvider')]
     public function testRoundDown(string $expected, string $number, int $precision = 0): void
     {
         self::assertSame($expected, BC::roundDown($number, $precision));
     }
 
-    public function addProvider(): array
+    public static function addProvider(): array
     {
         return [
             ['3', '1', '2'],
@@ -466,9 +437,7 @@ class BCTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider addProvider
-     */
+    #[DataProvider('addProvider')]
     public function testAdd(string $expected, string $left, string $right, ?int $scale = 0): void
     {
         self::assertSame($expected, BC::add($left, $right, $scale));
@@ -494,7 +463,7 @@ class BCTest extends TestCase
         self::assertSame('-1.5', BC::sub('1', '2.5'));
     }
 
-    public function subProvider(): array
+    public static function subProvider(): array
     {
         return [
             ['-1', '1', '2'],
@@ -507,15 +476,13 @@ class BCTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider subProvider
-     */
+    #[DataProvider('subProvider')]
     public function testSub(string $expected, string $left, string $right, ?int $scale = 0): void
     {
         self::assertSame($expected, BC::sub($left, $right, $scale));
     }
 
-    public function compProvider(): array
+    public static function compProvider(): array
     {
         return [
             ['-1', '5', BC::COMPARE_RIGHT_GRATER, 4],
@@ -533,26 +500,18 @@ class BCTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider compProvider
-     */
+    #[DataProvider('compProvider')]
     public function testComp(string $left, string $right, int $expected, int $scale): void
     {
         self::assertSame($expected, BC::comp($left, $right, $scale));
     }
 
-    public function getScaleProvider(): array
+    public static function getScaleProvider(): array
     {
-        return [
-            [10],
-            [25],
-            [0],
-        ];
+        return [[10], [25], [0]];
     }
 
-    /**
-     * @dataProvider getScaleProvider
-     */
+    #[DataProvider('getScaleProvider')]
     public function testGetScale(int $expected): void
     {
         BC::setScale($expected);
@@ -560,7 +519,7 @@ class BCTest extends TestCase
         self::assertSame($expected, BC::getScale());
     }
 
-    public function divProvider(): array
+    public static function divProvider(): array
     {
         return [
             ['0.5', '1', '2', 2],
@@ -570,9 +529,7 @@ class BCTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider divProvider
-     */
+    #[DataProvider('divProvider')]
     public function testDiv(string $expected, string $left, string $right, ?int $scale): void
     {
         self::assertSame($expected, BC::div($left, $right, $scale));
@@ -595,7 +552,7 @@ class BCTest extends TestCase
         self::assertSame('0.5', BC::div('1', '2'));
     }
 
-    public function modProvider(): array
+    public static function modProvider(): array
     {
         return [
             ['1', '11', '2', 0],
@@ -612,15 +569,13 @@ class BCTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider modProvider
-     */
+    #[DataProvider('modProvider')]
     public function testMod(string $expected, string $left, string $right, int $scale): void
     {
         self::assertSame($expected, BC::mod($left, $right, $scale));
     }
 
-    public function mulProvider(): array
+    public static function mulProvider(): array
     {
         return [
             ['1', '1.5', '1.5', 1],
@@ -641,15 +596,13 @@ class BCTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider mulProvider
-     */
+    #[DataProvider('mulProvider')]
     public function testMul(string $leftOperand, string $rightOperand, string $expected, ?int $scale): void
     {
         self::assertSame($expected, BC::mul($leftOperand, $rightOperand, $scale));
     }
 
-    public function powProvider(): array
+    public static function powProvider(): array
     {
         return [
             ['256', '2', '8', 0],
@@ -675,15 +628,13 @@ class BCTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider powProvider
-     */
+    #[DataProvider('powProvider')]
     public function testPow(string $expected, string $left, string $right, ?int $scale = 0): void
     {
         self::assertSame($expected, BC::pow($left, $right, $scale));
     }
 
-    public function logProvider(): array
+    public static function logProvider(): array
     {
         return [
             [
@@ -694,30 +645,19 @@ class BCTest extends TestCase
                 '2.3025850929940456840179914546843642076011014886287729760333279009675726096773524802359972050895982985',
                 '10',
             ],
-            [
-                '-INF',
-                '0',
-            ],
-            [
-                '0',
-                '1',
-            ],
-            [
-                'NAN',
-                '-1',
-            ],
+            ['-INF', '0'],
+            ['0', '1'],
+            ['NAN', '-1'],
         ];
     }
 
-    /**
-     * @dataProvider logProvider
-     */
+    #[DataProvider('logProvider')]
     public function testLog(string $expected, string $value): void
     {
         self::assertSame($expected, BC::log($value));
     }
 
-    public function expProvider(): array
+    public static function expProvider(): array
     {
         return [
             [
@@ -732,10 +672,7 @@ class BCTest extends TestCase
                 '0.3678794411714423215955237701614608674458111310317678345078368016974614957448998033571472743459196437',
                 '-1',
             ],
-            [
-                '1',
-                '0',
-            ],
+            ['1', '0'],
             [
                 '1021450427617659.4094516982518620090788645038742627301331924304676748729927177787220453326541582910229003291582467933',
                 '3.456e1',
@@ -743,15 +680,13 @@ class BCTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider expProvider
-     */
+    #[DataProvider('expProvider')]
     public function testExp(string $expected, string $arg): void
     {
         self::assertSame($expected, BC::exp($arg));
     }
 
-    public function factProvider(): array
+    public static function factProvider(): array
     {
         return [
             ['1', 'FOO'],
@@ -766,9 +701,7 @@ class BCTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider factProvider
-     */
+    #[DataProvider('factProvider')]
     public function testFact(string $expected, string $fact): void
     {
         self::assertSame($expected, BC::fact($fact));
@@ -798,7 +731,7 @@ class BCTest extends TestCase
         self::assertSame('74.08', BC::pow('4.2', '3'));
     }
 
-    public function powModProvider(): array
+    public static function powModProvider(): array
     {
         return [
             ['4', '5', '2', '7', 0],
@@ -815,15 +748,13 @@ class BCTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider powModProvider
-     */
+    #[DataProvider('powModProvider')]
     public function testPowMod(string $expected, string $left, string $right, string $modulus, ?int $scale): void
     {
         self::assertSame($expected, BC::powMod($left, $right, $modulus, $scale));
     }
 
-    public function sqrtProvider(): array
+    public static function sqrtProvider(): array
     {
         return [
             ['3', '9', 0],
@@ -833,9 +764,7 @@ class BCTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider sqrtProvider
-     */
+    #[DataProvider('sqrtProvider')]
     public function testSqrt(string $expected, string $operand, int $scale): void
     {
         self::assertSame($expected, BC::sqrt($operand, $scale));
@@ -851,7 +780,7 @@ class BCTest extends TestCase
         self::assertSame('3.07', BC::sqrt('9.444'));
     }
 
-    public function hexdecProvider(): array
+    public static function hexdecProvider(): array
     {
         return [
             ['123', '7b'],
@@ -867,15 +796,13 @@ class BCTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider hexdecProvider
-     */
+    #[DataProvider('hexdecProvider')]
     public function testHexdec(string $expected, string $operand): void
     {
         self::assertSame($expected, BC::hexdec($operand));
     }
 
-    public function dechexProvider(): array
+    public static function dechexProvider(): array
     {
         return [
             ['7b', '123'],
@@ -887,23 +814,19 @@ class BCTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dechexProvider
-     */
+    #[DataProvider('dechexProvider')]
     public function testDechex(string $expected, string $operand): void
     {
         self::assertSame($expected, BC::dechex($operand));
     }
 
-    /**
-     * @dataProvider bitAddProvider
-     */
+    #[DataProvider('bitAddProvider')]
     public function testBitAdd(string $expected, string $left, string $right): void
     {
         self::assertSame($expected, BC::bitAnd($left, $right));
     }
 
-    public function bitAddProvider(): array
+    public static function bitAddProvider(): array
     {
         return [
             [
@@ -923,15 +846,13 @@ class BCTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider bitOrProvider
-     */
+    #[DataProvider('bitOrProvider')]
     public function testBitOr(string $expected, string $left, string $right): void
     {
         self::assertSame($expected, BC::bitOr($left, $right));
     }
 
-    public function bitOrProvider(): array
+    public static function bitOrProvider(): array
     {
         return [
             [
@@ -953,15 +874,13 @@ class BCTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider bitXorProvider
-     */
+    #[DataProvider('bitXorProvider')]
     public function testBitXor(string $expected, string $left, string $right): void
     {
         self::assertSame($expected, BC::bitXor($left, $right));
     }
 
-    public function bitXorProvider(): array
+    public static function bitXorProvider(): array
     {
         return [
             ['7', '2', '5'],
@@ -1031,9 +950,7 @@ class BCTest extends TestCase
         BC::bitAnd('1', '0.001');
     }
 
-    /**
-     * @dataProvider convertBinaryProvider
-     */
+    #[DataProvider('convertBinaryProvider')]
     public function testConvertBinary(string $expected, string $base64binary): void
     {
         $decoded = (string)base64_decode($base64binary, true);
@@ -1041,7 +958,7 @@ class BCTest extends TestCase
         self::assertSame($decoded, BC::dec2bin($expected));
     }
 
-    public function convertBinaryProvider(): array
+    public static function convertBinaryProvider(): array
     {
         return [
             ['1000000000865464564564564567867867867800000', 'C3q8Ypr74y+H5r28hvnkbmHA'],

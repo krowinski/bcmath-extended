@@ -9,22 +9,14 @@ use InvalidArgumentException;
 
 class BC
 {
-    public const COMPARE_EQUAL = 0;
-
-    public const COMPARE_LEFT_GRATER = 1;
-
-    public const COMPARE_RIGHT_GRATER = -1;
-
-    protected const DEFAULT_SCALE = 100;
-
-    protected const MAX_BASE = 256;
-
-    protected const BIT_OPERATOR_AND = 'and';
-
-    protected const BIT_OPERATOR_OR = 'or';
-
-    protected const BIT_OPERATOR_XOR = 'xor';
-
+    public const int COMPARE_EQUAL = 0;
+    public const int COMPARE_LEFT_GRATER = 1;
+    public const int COMPARE_RIGHT_GRATER = -1;
+    protected const int DEFAULT_SCALE = 100;
+    protected const int MAX_BASE = 256;
+    protected const string BIT_OPERATOR_AND = 'and';
+    protected const string BIT_OPERATOR_OR = 'or';
+    protected const string BIT_OPERATOR_XOR = 'xor';
     protected static bool $trimTrailingZeroes = true;
 
     public static function rand(string $min, string $max): string
@@ -67,7 +59,7 @@ class BC
 
     protected static function isFloat(string $number): bool
     {
-        return strpos($number, '.') !== false;
+        return str_contains($number, '.');
     }
 
     public static function pow(string $base, string $exponent, ?int $scale = null): string
@@ -109,7 +101,15 @@ class BC
 
     protected static function parseNumber(string $number): string
     {
-        $number = str_replace('+', '', (string)filter_var($number, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION));
+        $number = str_replace(
+            '+',
+            '',
+            (string)filter_var(
+                $number,
+                FILTER_SANITIZE_NUMBER_FLOAT,
+                FILTER_FLAG_ALLOW_FRACTION
+            )
+        );
         if ($number === '-0' || !is_numeric($number)) {
             return '0';
         }
@@ -189,7 +189,7 @@ class BC
             $r = bcdiv($dividend, $divisor, $scale);
         }
 
-        return static::formatTrailingZeroes((string)$r);
+        return static::formatTrailingZeroes($r);
     }
 
     public static function log(string $number): string
@@ -230,11 +230,7 @@ class BC
             return bccomp($leftOperand, $rightOperand, max(strlen($leftOperand), strlen($rightOperand)));
         }
 
-        return bccomp(
-            $leftOperand,
-            $rightOperand,
-            $scale
-        );
+        return bccomp($leftOperand, $rightOperand, $scale);
     }
 
     public static function sub(string $leftOperand, string $rightOperand, ?int $scale = null): string
@@ -261,7 +257,7 @@ class BC
             $r = bcsqrt($number, $scale);
         }
 
-        return static::formatTrailingZeroes((string)$r);
+        return static::formatTrailingZeroes($r);
     }
 
     public static function setTrimTrailingZeroes(bool $flag): void
@@ -270,7 +266,7 @@ class BC
     }
 
     /**
-     * @param  mixed  $values
+     * @param mixed $values
      */
     public static function max(...$values): ?string
     {
@@ -297,7 +293,7 @@ class BC
     }
 
     /**
-     * @param  mixed  $values
+     * @param mixed $values
      */
     public static function min(...$values): ?string
     {
@@ -314,12 +310,8 @@ class BC
         return $min;
     }
 
-    public static function powMod(
-        string $base,
-        string $exponent,
-        string $modulus,
-        ?int $scale = null
-    ): string {
+    public static function powMod(string $base, string $exponent, string $modulus, ?int $scale = null): string
+    {
         $base = static::convertScientificNotationToString($base);
         $exponent = static::convertScientificNotationToString($exponent);
 
@@ -332,11 +324,7 @@ class BC
         }
 
         // bcpowmod don't support floats
-        if (
-            static::isFloat($base)
-            || static::isFloat($exponent)
-            || static::isFloat($modulus)
-        ) {
+        if (static::isFloat($base) || static::isFloat($exponent) || static::isFloat($modulus)) {
             $r = static::mod(static::pow($base, $exponent, $scale), $modulus, $scale);
         } elseif ($scale === null) {
             $r = bcpowmod($base, $exponent, $modulus);
@@ -344,7 +332,7 @@ class BC
             $r = bcpowmod($base, $exponent, $modulus, $scale);
         }
 
-        return static::formatTrailingZeroes((string)$r);
+        return static::formatTrailingZeroes($r);
     }
 
     protected static function isNegative(string $number): bool
@@ -422,10 +410,8 @@ class BC
         return static::dechex($quotient) . $remainderToHex;
     }
 
-    public static function bitAnd(
-        string $leftOperand,
-        string $rightOperand
-    ): string {
+    public static function bitAnd(string $leftOperand, string $rightOperand): string
+    {
         return static::bitOperatorHelper($leftOperand, $rightOperand, static::BIT_OPERATOR_AND);
     }
 
@@ -527,7 +513,7 @@ class BC
         $number = static::convertScientificNotationToString($number);
 
         if (static::isNegative($number)) {
-            $number = (string)substr($number, 1);
+            $number = substr($number, 1);
         }
 
         return static::parseNumber($number);
