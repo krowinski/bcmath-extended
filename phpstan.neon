@@ -5,3 +5,5 @@ parameters:
   paths:
     - src
     - tests
+  ignoreErrors:
+    - identifier: missingType.iterableValue

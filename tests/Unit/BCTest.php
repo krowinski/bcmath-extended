@@ -88,7 +88,7 @@ class BCTest extends TestCase
     #[DataProvider('scientificNotationProvider')]
     public function testConvertScientificNotationToString(string $expected, string $number): void
     {
-        self::assertSame($expected, BC::convertScientificNotationToString($number));
+        self::assertSame($expected, (string)BC::convertToNumber($number));
     }
 
     public static function ceilProvider(): array
@@ -124,7 +124,7 @@ class BCTest extends TestCase
     #[DataProvider('ceilProvider')]
     public function testCeil(string $expected, string $number): void
     {
-        self::assertSame($expected, BC::ceil($number));
+        self::assertSame($expected, (string)BC::ceil($number));
     }
 
     public static function floorProvider(): array
@@ -161,7 +161,7 @@ class BCTest extends TestCase
     #[DataProvider('floorProvider')]
     public function testFloor(string $expected, string $number): void
     {
-        self::assertSame($expected, BC::floor($number));
+        self::assertSame($expected, (string)BC::floor($number));
     }
 
     public static function absProvider(): array
@@ -191,7 +191,7 @@ class BCTest extends TestCase
     #[DataProvider('absProvider')]
     public function testAbs(string $expected, string $number): void
     {
-        self::assertSame($expected, BC::abs($number));
+        self::assertSame($expected, (string)BC::abs($number));
     }
 
     public static function roundProvider(): array
@@ -256,7 +256,7 @@ class BCTest extends TestCase
     #[DataProvider('roundProvider')]
     public function testRound(string $expected, string $number, int $precision = 0): void
     {
-        self::assertSame($expected, BC::round($number, $precision));
+        self::assertSame($expected, (string)BC::round($number, $precision));
     }
 
     public static function roundHalfEvenProvider(): array
@@ -277,7 +277,7 @@ class BCTest extends TestCase
             ['-2.35', '-2.35', 2],
             ['-2.4', '-2.35', 1],
             ['2.4', '2.35', 1],
-            ['0', '0.005', 2],
+            ['0.00', '0.005', 2],
             ['0.02', '0.015', 2],
             ['0.02', '0.025', 2],
             ['0.04', '0.035', 2],
@@ -294,7 +294,7 @@ class BCTest extends TestCase
     #[DataProvider('roundHalfEvenProvider')]
     public function testRoundHalfEven(string $expected, string $number, int $precision = 0): void
     {
-        self::assertSame($expected, BC::roundHalfEven($number, $precision));
+        self::assertSame($expected, (string)BC::roundHalfEven($number, $precision));
     }
 
     public static function randProvider(): array
@@ -308,47 +308,47 @@ class BCTest extends TestCase
     #[DataProvider('randProvider')]
     public function testRand(string $left, string $right): void
     {
-        $rand = BC::rand($left, $right);
+        $rand = (string)BC::rand($left, $right);
         self::assertTrue($rand >= $left);
         self::assertTrue($rand <= $right);
     }
 
     public function testMax(): void
     {
-        self::assertSame('3', BC::max(1, 2, 3));
-        self::assertSame('6', BC::max(6, 3, 2));
-        self::assertSame('999', BC::max(100, 999, 5));
+        self::assertSame('3', (string)BC::max(1, 2, 3));
+        self::assertSame('6', (string)BC::max(6, 3, 2));
+        self::assertSame('999', (string)BC::max(100, 999, 5));
 
-        self::assertSame('677', BC::max([3, 5, 677]));
-        self::assertSame('-3', BC::max([-3, -5, -677]));
+        self::assertSame('677', (string)BC::max([3, 5, 677]));
+        self::assertSame('-3', (string)BC::max([-3, -5, -677]));
 
         self::assertSame(
             '999999999999999999999999999999999999999999',
-            BC::max(
+            (string)BC::max(
                 '432423432423423423423423432432423423423',
                 '999999999999999999999999999999999999999999',
                 '321312312423435657'
             )
         );
-        self::assertSame('0.00000000099999', BC::max(9.9999E-10, -5.6E-4));
+        self::assertSame('0.00000000099999', (string)BC::max(9.9999E-10, -5.6E-4));
     }
 
     public function testMin(): void
     {
-        self::assertSame('7.20', BC::min('7.30', '7.20'));
-        self::assertSame('3', BC::min([3, 5, 677]));
-        self::assertSame('-677', BC::min([-3, -5, -677]));
+        self::assertSame('7.20', (string)BC::min('7.30', '7.20'));
+        self::assertSame('3', (string)BC::min([3, 5, 677]));
+        self::assertSame('-677', (string)BC::min([-3, -5, -677]));
 
         self::assertSame(
             '321312312423435657',
-            BC::min(
+            (string)BC::min(
                 '432423432423423423423423432432423423423',
                 '999999999999999999999999999999999999999999',
                 '321312312423435657'
             )
         );
 
-        self::assertSame('-0.00056', BC::min(9.9999E-10, -5.6E-4));
+        self::assertSame('-0.00056', (string)BC::min(9.9999E-10, -5.6E-4));
     }
 
     public static function setScaleProvider(): array
@@ -360,7 +360,7 @@ class BCTest extends TestCase
     public function testSetScale(int $scale, string $expected, string $left, string $right): void
     {
         BC::setScale($scale);
-        self::assertSame($expected, BC::add($left, $right));
+        self::assertSame($expected, (string)BC::add($left, $right));
     }
 
     public static function roundUpProvider(): array
@@ -389,7 +389,7 @@ class BCTest extends TestCase
     #[DataProvider('roundUpProvider')]
     public function testRoundUp(string $expected, string $number, int $precision = 0): void
     {
-        self::assertSame($expected, BC::roundUp($number, $precision));
+        self::assertSame($expected, (string)BC::roundUp($number, $precision));
     }
 
     public static function roundDownProvider(): array
@@ -419,7 +419,7 @@ class BCTest extends TestCase
     #[DataProvider('roundDownProvider')]
     public function testRoundDown(string $expected, string $number, int $precision = 0): void
     {
-        self::assertSame($expected, BC::roundDown($number, $precision));
+        self::assertSame($expected, (string)BC::roundDown($number, $precision));
     }
 
     public static function addProvider(): array
@@ -440,27 +440,27 @@ class BCTest extends TestCase
     #[DataProvider('addProvider')]
     public function testAdd(string $expected, string $left, string $right, ?int $scale = 0): void
     {
-        self::assertSame($expected, BC::add($left, $right, $scale));
+        self::assertSame($expected, (string)BC::add($left, $right, $scale));
     }
 
     public function testAddUsingGlobalScale(): void
     {
         BC::setScale(0);
-        self::assertSame('2', BC::add('1', '1.05'));
-        self::assertSame('2.05', BC::add('1', '1.05', 2));
+        self::assertSame('2', (string)BC::add('1', '1.05'));
+        self::assertSame('2.05', (string)BC::add('1', '1.05', 2));
         BC::setScale(2);
-        self::assertSame('2', BC::add('1', '1.05', 0));
-        self::assertSame('2.05', BC::add('1', '1.05'));
+        self::assertSame('2', (string)BC::add('1', '1.05', 0));
+        self::assertSame('2.05', (string)BC::add('1', '1.05'));
     }
 
     public function testSubUsingGlobalScale(): void
     {
         BC::setScale(0);
-        self::assertSame('-1', BC::sub('1', '2.5'));
-        self::assertSame('-1.5', BC::sub('1', '2.5', 2));
+        self::assertSame('-1', (string)BC::sub('1', '2.5'));
+        self::assertSame('-1.5', (string)BC::sub('1', '2.5', 2));
         BC::setScale(2);
-        self::assertSame('-1', BC::sub('1', '2.5', 0));
-        self::assertSame('-1.5', BC::sub('1', '2.5'));
+        self::assertSame('-1', (string)BC::sub('1', '2.5', 0));
+        self::assertSame('-1.5', (string)BC::sub('1', '2.5'));
     }
 
     public static function subProvider(): array
@@ -479,7 +479,7 @@ class BCTest extends TestCase
     #[DataProvider('subProvider')]
     public function testSub(string $expected, string $left, string $right, ?int $scale = 0): void
     {
-        self::assertSame($expected, BC::sub($left, $right, $scale));
+        self::assertSame($expected, (string)BC::sub($left, $right, $scale));
     }
 
     public static function compProvider(): array
@@ -503,7 +503,7 @@ class BCTest extends TestCase
     #[DataProvider('compProvider')]
     public function testComp(string $left, string $right, int $expected, int $scale): void
     {
-        self::assertSame($expected, BC::comp($left, $right, $scale));
+        self::assertSame($expected, BC::compare($left, $right, $scale));
     }
 
     public static function getScaleProvider(): array
@@ -532,7 +532,7 @@ class BCTest extends TestCase
     #[DataProvider('divProvider')]
     public function testDiv(string $expected, string $left, string $right, ?int $scale): void
     {
-        self::assertSame($expected, BC::div($left, $right, $scale));
+        self::assertSame($expected, (string)BC::div($left, $right, $scale));
     }
 
     public function testThrowDivByZero(): void
@@ -545,11 +545,11 @@ class BCTest extends TestCase
     public function testDivUsingGlobalScale(): void
     {
         BC::setScale(0);
-        self::assertSame('0', BC::div('1', '2'));
-        self::assertSame('0.5', BC::div('1', '2', 2));
+        self::assertSame('0', (string)BC::div('1', '2'));
+        self::assertSame('0.5', (string)BC::div('1', '2', 2));
         BC::setScale(2);
-        self::assertSame('0', BC::div('1', '2', 0));
-        self::assertSame('0.5', BC::div('1', '2'));
+        self::assertSame('0', (string)BC::div('1', '2', 0));
+        self::assertSame('0.5', (string)BC::div('1', '2'));
     }
 
     public static function modProvider(): array
@@ -572,7 +572,7 @@ class BCTest extends TestCase
     #[DataProvider('modProvider')]
     public function testMod(string $expected, string $left, string $right, int $scale): void
     {
-        self::assertSame($expected, BC::mod($left, $right, $scale));
+        self::assertSame($expected, (string)BC::mod($left, $right, $scale));
     }
 
     public static function mulProvider(): array
@@ -599,7 +599,7 @@ class BCTest extends TestCase
     #[DataProvider('mulProvider')]
     public function testMul(string $leftOperand, string $rightOperand, string $expected, ?int $scale): void
     {
-        self::assertSame($expected, BC::mul($leftOperand, $rightOperand, $scale));
+        self::assertSame($expected, (string)BC::mul($leftOperand, $rightOperand, $scale));
     }
 
     public static function powProvider(): array
@@ -631,7 +631,7 @@ class BCTest extends TestCase
     #[DataProvider('powProvider')]
     public function testPow(string $expected, string $left, string $right, ?int $scale = 0): void
     {
-        self::assertSame($expected, BC::pow($left, $right, $scale));
+        self::assertSame($expected, (string)BC::pow($left, $right, $scale));
     }
 
     public static function logProvider(): array
@@ -654,7 +654,7 @@ class BCTest extends TestCase
     #[DataProvider('logProvider')]
     public function testLog(string $expected, string $value): void
     {
-        self::assertSame($expected, BC::log($value));
+        self::assertSame($expected, (string)BC::log($value));
     }
 
     public static function expProvider(): array
@@ -683,7 +683,7 @@ class BCTest extends TestCase
     #[DataProvider('expProvider')]
     public function testExp(string $expected, string $arg): void
     {
-        self::assertSame($expected, BC::exp($arg));
+        self::assertSame($expected, (string)BC::exp($arg));
     }
 
     public static function factProvider(): array
@@ -704,31 +704,31 @@ class BCTest extends TestCase
     #[DataProvider('factProvider')]
     public function testFact(string $expected, string $fact): void
     {
-        self::assertSame($expected, BC::fact($fact));
+        self::assertSame($expected, (string)BC::fact($fact));
     }
 
     public function testFactThrowErrorOnFloat(): void
     {
         $this->expectExceptionMessage('Number has to be an integer');
         $this->expectException(InvalidArgumentException::class);
-        BC::fact('1.1');
+        (string)BC::fact('1.1');
     }
 
     public function testFactThrowErrorOnNegative(): void
     {
         $this->expectExceptionMessage('Number has to be greater than or equal to 0');
         $this->expectException(InvalidArgumentException::class);
-        BC::fact('-1');
+        (string)BC::fact('-1');
     }
 
     public function testPowUsingGlobalScale(): void
     {
         BC::setScale(0);
-        self::assertSame('74', BC::pow('4.2', '3'));
-        self::assertSame('74.08', BC::pow('4.2', '3', 2));
+        self::assertSame('74', (string)BC::pow('4.2', '3'));
+        self::assertSame('74.08', (string)BC::pow('4.2', '3', 2));
         BC::setScale(2);
-        self::assertSame('74', BC::pow('4.2', '3', 0));
-        self::assertSame('74.08', BC::pow('4.2', '3'));
+        self::assertSame('74', (string)BC::pow('4.2', '3', 0));
+        self::assertSame('74.08', (string)BC::pow('4.2', '3'));
     }
 
     public static function powModProvider(): array
@@ -751,7 +751,7 @@ class BCTest extends TestCase
     #[DataProvider('powModProvider')]
     public function testPowMod(string $expected, string $left, string $right, string $modulus, ?int $scale): void
     {
-        self::assertSame($expected, BC::powMod($left, $right, $modulus, $scale));
+        self::assertSame($expected, (string)BC::powMod($left, $right, $modulus, $scale));
     }
 
     public static function sqrtProvider(): array
@@ -767,17 +767,17 @@ class BCTest extends TestCase
     #[DataProvider('sqrtProvider')]
     public function testSqrt(string $expected, string $operand, int $scale): void
     {
-        self::assertSame($expected, BC::sqrt($operand, $scale));
+        self::assertSame($expected, (string)BC::sqrt($operand, $scale));
     }
 
     public function testSqrtUsingGlobalScale(): void
     {
         BC::setScale(0);
-        self::assertSame('3', BC::sqrt('9.444'));
-        self::assertSame('3.07', BC::sqrt('9.444', 2));
+        self::assertSame('3', (string)BC::sqrt('9.444'));
+        self::assertSame('3.07', (string)BC::sqrt('9.444', 2));
         BC::setScale(2);
-        self::assertSame('3', BC::sqrt('9.444', 0));
-        self::assertSame('3.07', BC::sqrt('9.444'));
+        self::assertSame('3', (string)BC::sqrt('9.444', 0));
+        self::assertSame('3.07', (string)BC::sqrt('9.444'));
     }
 
     public static function hexdecProvider(): array
@@ -823,7 +823,7 @@ class BCTest extends TestCase
     #[DataProvider('bitAddProvider')]
     public function testBitAdd(string $expected, string $left, string $right): void
     {
-        self::assertSame($expected, BC::bitAnd($left, $right));
+        self::assertSame($expected, (string)BC::bitAnd($left, $right));
     }
 
     public static function bitAddProvider(): array
@@ -849,7 +849,7 @@ class BCTest extends TestCase
     #[DataProvider('bitOrProvider')]
     public function testBitOr(string $expected, string $left, string $right): void
     {
-        self::assertSame($expected, BC::bitOr($left, $right));
+        self::assertSame($expected, (string)BC::bitOr($left, $right));
     }
 
     public static function bitOrProvider(): array
@@ -877,7 +877,7 @@ class BCTest extends TestCase
     #[DataProvider('bitXorProvider')]
     public function testBitXor(string $expected, string $left, string $right): void
     {
-        self::assertSame($expected, BC::bitXor($left, $right));
+        self::assertSame($expected, (string)BC::bitXor($left, $right));
     }
 
     public static function bitXorProvider(): array
@@ -987,28 +987,28 @@ class BCTest extends TestCase
     {
         BC::setTrimTrailingZeroes(false);
 
-        self::assertSame('64.0000000000', BC::pow('8', '2', 10));
-        self::assertSame('2.0000', BC::sqrt('4', 4));
-        self::assertSame('14444.2230000000', BC::add('10000.123', '4444.1', 10));
-        self::assertSame('19.524770142330000', BC::mul('9.123767', '2.13999', 15));
-        self::assertSame('2.00', BC::div('4.000', '2.0', 2));
-        self::assertSame('5556.0230000000', BC::sub('10000.123', '4444.1', 10));
-        self::assertSame('1.35', BC::powMod('10000.123', '4444.1', '2'));
-        self::assertSame('1111.9230000000', BC::mod('10000.123', '4444.1', 10));
-        self::assertSame('-50000000000.0000000000', BC::convertScientificNotationToString('-5e+10'));
-        self::assertSame('10000.123000', BC::round('10000.123', 6));
+        self::assertSame('64.0000000000', (string)BC::pow('8', '2', 10));
+        self::assertSame('2.0000', (string)BC::sqrt('4', 4));
+        self::assertSame('14444.2230000000', (string)BC::add('10000.123', '4444.1', 10));
+        self::assertSame('19.524770142330000', (string)BC::mul('9.123767', '2.13999', 15));
+        self::assertSame('2.00', (string)BC::div('4.000', '2.0', 2));
+        self::assertSame('5556.0230000000', (string)BC::sub('10000.123', '4444.1', 10));
+        self::assertSame('1.35', (string)BC::powMod('10000.123', '4444.1', '2'));
+        self::assertSame('1111.9230000000', (string)BC::mod('10000.123', '4444.1', 10));
+        self::assertSame('-50000000000.0000000000', (string)BC::convertToNumber('-5e+10'));
+        self::assertSame('10000.123000', (string)BC::round('10000.123', 6));
 
         BC::setTrimTrailingZeroes(true);
 
-        self::assertSame('64', BC::pow('8', '2', 10));
-        self::assertSame('2', BC::sqrt('4', 4));
-        self::assertSame('14444.223', BC::add('10000.123', '4444.1', 10));
-        self::assertSame('19.52477014233', BC::mul('9.123767', '2.13999', 15));
-        self::assertSame('2', BC::div('4.000', '2.0', 2));
-        self::assertSame('5556.023', BC::sub('10000.123', '4444.1', 10));
-        self::assertSame('1.35', BC::powMod('10000.123', '4444.1', '2'));
-        self::assertSame('1111.923', BC::mod('10000.123', '4444.1', 10));
-        self::assertSame('-50000000000', BC::convertScientificNotationToString('-5e+10'));
-        self::assertSame('10000.123', BC::round('10000.123', 6));
+        self::assertSame('64', (string)BC::pow('8', '2', 10));
+        self::assertSame('2', (string)BC::sqrt('4', 4));
+        self::assertSame('14444.223', (string)BC::add('10000.123', '4444.1', 10));
+        self::assertSame('19.52477014233', (string)BC::mul('9.123767', '2.13999', 15));
+        self::assertSame('2', (string)BC::div('4.000', '2.0', 2));
+        self::assertSame('5556.023', (string)BC::sub('10000.123', '4444.1', 10));
+        self::assertSame('1.35', (string)BC::powMod('10000.123', '4444.1', '2'));
+        self::assertSame('1111.923', (string)BC::mod('10000.123', '4444.1', 10));
+        self::assertSame('-50000000000', (string)BC::convertToNumber('-5e+10'));
+        self::assertSame('10000.123', (string)BC::round('10000.123', 6));
     }
 }
