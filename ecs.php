@@ -12,7 +12,7 @@ return static function (ECSConfig $ecsConfig): void {
         SetList::CLEAN_CODE,
         SetList::STRICT,
         SetList::ARRAY,
-        SetList::PHPUNIT,
+        SetList::PHPUNIT
     ]);
 
     $ecsConfig->fileExtensions(['php']);

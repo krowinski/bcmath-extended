@@ -5,7 +5,8 @@
 [![Total Downloads](https://poser.pugx.org/krowinski/bcmath-extended/downloads)](https://packagist.org/packages/krowinski/bcmath-extended)
 [![License](https://poser.pugx.org/krowinski/bcmath-extended/license)](https://packagist.org/packages/krowinski/bcmath-extended)
 
-Extends php BCMath lib for missing functions like floor, ceil, round, abs, min, max, rand for big numbers.
+Extends php BCMath lib for missing functions like abs, min, max, rand, fact, log for big numbers.
+Handles scientific notation like 1.0E+35 to be used with BCMath.
 Also wraps existing BCMath functions. (more http://php.net/manual/en/book.bc.php)
 
 Installation
@@ -20,7 +21,7 @@ Features
 - config
     - setTrimTrailingZeroes - disable|enable trailing zeros (default trimming is enabled)  
 - new tool methods
-    - convertScientificNotationToString - converts scientific notation to string
+  - convertToNumber - converts scientific notation, string and int to [BcMath\Number](https://www.php.net/manual/en/class.bcmath-number.php)
     - getScale - gets current global scale 
     - getDecimalsLengthFromNumber - gets amount of decimals 
     - hexdec - converting from hexadecimal to decimal
@@ -41,12 +42,12 @@ Features
     - log
     - fact
     - pow (supports fractional)
-    - mod (supports fractional + scale in php 5.6 <)
+  - mod (supports fractional + scale)
     - bitwise operators
         - bitXor
         - bitOr
         - bitAnd
-- proxy for original functions (http://php.net/manual/en/book.bc.php)
+- proxy for [original functions](https://www.php.net/manual/en/book.bc.php)
 - all functions supports scientific notation
 - all functions are static, so it can be easily replaced by this lib
 
