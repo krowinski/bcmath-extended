@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1745143479">
-  <project timestamp="1745143479">
+<coverage generated="1750838037">
+  <project timestamp="1750838037" name="Clover Coverage">
     <package name="BCMathExtended">
       <file name="/home/runner/work/bcmath-extended/bcmath-extended/src/BCMathExtended/BC.php">
         <class name="BCMathExtended\BC" namespace="BCMathExtended">
