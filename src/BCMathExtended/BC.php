@@ -12,8 +12,8 @@ use RoundingMode;
 class BC
 {
     public const int COMPARE_EQUAL = 0;
-    public const int COMPARE_LEFT_GRATER = 1;
-    public const int COMPARE_RIGHT_GRATER = -1;
+    public const int COMPARE_LEFT_GREATER = 1;
+    public const int COMPARE_RIGHT_GREATER = -1;
 
     protected const int DEFAULT_SCALE = 100;
 
@@ -34,7 +34,7 @@ class BC
         $difference = $max->sub($min)->add(1);
         $randPercent = static::div(mt_rand(), mt_getrandmax(), 8);
 
-        return $difference->mul($randPercent, 8)->add(1, 0);
+        return $difference->mul($randPercent, 8)->add($min, 0);
     }
 
     public static function convertToNumber(int|string|Number $number): Number
@@ -225,7 +225,7 @@ class BC
         if ((string)$number === '0') {
             return '-INF';
         }
-        if ($number->compare('0') === static::COMPARE_RIGHT_GRATER) {
+        if ($number->compare('0') === static::COMPARE_RIGHT_GREATER) {
             return 'NAN';
         }
 
@@ -300,7 +300,7 @@ class BC
             $number = static::convertToNumber((string)$number);
             if ($max === null) {
                 $max = $number;
-            } elseif ($max->compare($number) === static::COMPARE_RIGHT_GRATER) {
+            } elseif ($max->compare($number) === static::COMPARE_RIGHT_GREATER) {
                 $max = $number;
             }
         }
@@ -327,7 +327,7 @@ class BC
             $number = static::convertToNumber((string)$number);
             if ($min === null) {
                 $min = $number;
-            } elseif ($min->compare($number) === static::COMPARE_LEFT_GRATER) {
+            } elseif ($min->compare($number) === static::COMPARE_LEFT_GREATER) {
                 $min = $number;
             }
         }
@@ -642,12 +642,7 @@ class BC
         int $precision = 0,
         RoundingMode $mode = RoundingMode::HalfAwayFromZero
     ): Number {
-        $number = static::convertToNumber($number);
-        if (static::isFloat($number)) {
-            $number = static::formatTrailingZeroes($number->round($precision, $mode));
-        }
-
-        return static::parseToNumber($number);
+        return static::formatTrailingZeroes(static::convertToNumber($number)->round($precision, $mode));
     }
 
     public static function roundUp(int|string|Number $number, int $precision = 0): Number

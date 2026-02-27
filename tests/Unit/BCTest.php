@@ -313,6 +313,20 @@ class BCTest extends TestCase
         self::assertTrue($rand <= $right);
     }
 
+    public function testRandWithSameMinMax(): void
+    {
+        self::assertSame('100', (string)BC::rand(100, 100));
+    }
+
+    public function testRandRangeCorrectness(): void
+    {
+        for ($i = 0; $i < 10; $i++) {
+            $result = (int)(string)BC::rand(50, 60);
+            self::assertGreaterThanOrEqual(50, $result, 'rand(50, 60) returned value less than min');
+            self::assertLessThanOrEqual(60, $result, 'rand(50, 60) returned value greater than max');
+        }
+    }
+
     public function testMax(): void
     {
         self::assertSame('3', (string)BC::max(1, 2, 3));
@@ -485,18 +499,18 @@ class BCTest extends TestCase
     public static function compProvider(): array
     {
         return [
-            ['-1', '5', BC::COMPARE_RIGHT_GRATER, 4],
-            ['1928372132132819737213', '8728932001983192837219398127471', BC::COMPARE_RIGHT_GRATER, 1],
-            ['1.00000000000000000001', '2', BC::COMPARE_RIGHT_GRATER, 1],
-            ['97321', '1', BC::COMPARE_LEFT_GRATER, 2],
-            ['1', '0', BC::COMPARE_LEFT_GRATER, 0],
+            ['-1', '5', BC::COMPARE_RIGHT_GREATER, 4],
+            ['1928372132132819737213', '8728932001983192837219398127471', BC::COMPARE_RIGHT_GREATER, 1],
+            ['1.00000000000000000001', '2', BC::COMPARE_RIGHT_GREATER, 1],
+            ['97321', '1', BC::COMPARE_LEFT_GREATER, 2],
+            ['1', '0', BC::COMPARE_LEFT_GREATER, 0],
             ['1', '1', BC::COMPARE_EQUAL, 0],
-            ['0', '1', BC::COMPARE_RIGHT_GRATER, 0],
-            ['1', '0', BC::COMPARE_LEFT_GRATER, 0],
+            ['0', '1', BC::COMPARE_RIGHT_GREATER, 0],
+            ['1', '0', BC::COMPARE_LEFT_GREATER, 0],
             ['1', '1', BC::COMPARE_EQUAL, 0],
-            ['0', '1', BC::COMPARE_RIGHT_GRATER, 0],
-            ['1', '0.0005', BC::COMPARE_LEFT_GRATER, 4],
-            ['1', '0.000000000000000000000000005', BC::COMPARE_LEFT_GRATER, 2],
+            ['0', '1', BC::COMPARE_RIGHT_GREATER, 0],
+            ['1', '0.0005', BC::COMPARE_LEFT_GREATER, 4],
+            ['1', '0.000000000000000000000000005', BC::COMPARE_LEFT_GREATER, 2],
         ];
     }
 
@@ -997,6 +1011,9 @@ class BCTest extends TestCase
         self::assertSame('1111.9230000000', (string)BC::mod('10000.123', '4444.1', 10));
         self::assertSame('-50000000000.0000000000', (string)BC::convertToNumber('-5e+10'));
         self::assertSame('10000.123000', (string)BC::round('10000.123', 6));
+
+        self::assertSame('1.00', (string)BC::round('1', 2));
+        self::assertSame('1.00', (string)BC::round('1.0', 2));
 
         BC::setTrimTrailingZeroes(true);
 
